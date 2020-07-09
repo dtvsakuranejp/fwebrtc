@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
+  <title>中継カメラ01送信</title>
+</head>
+<body>
+    <video id="my-video" width="1440" autoplay muted playsinline></video>
+    <p>Your ID: <span id="my-id"></span></p>
+    <div>
+        <input type="text" placeholder="reciever-id" id="reciever-id">
+        <button id="start-video">START</button>
+        <button id="stop-video">STOP</button>
+    </div>
+    <div>
+        <pre class="messages" id="messages"></pre>
+    </div>
+
+    <script>
+        let localStream;
+        let mediaConnection;
+      
+        // カメラ映像取得
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                width: 1920,
+                height: 1080
+                },
+            audio: true})
+          .then( stream => {
+          // 成功時にvideo要素にカメラ映像をセットし、再生
+          const videoElm = document.getElementById('my-video')
+          videoElm.srcObject = stream;
+          videoElm.play();
+          // 着信時に相手にカメラ映像を返せるように、グローバル変数に保存しておく
+          localStream = stream;
+        }).catch( error => {
+          // 失敗時にはエラーログを出力
+          console.error('mediaDevice.getUserMedia() error:', error);
+          return;
+        });
+
+          //Peer作成
+        const peer = new Peer({
+        key: 'e66e65d0-ef54-42c1-8e0b-59b8414586ee',
+        debug: 3
+        });
+
+        //PeerID取得
+        peer.on('open', () => {
+          document.getElementById('my-id').textContent = peer.id;
+        });
+
+        // 発信処理
+        document.getElementById('start-video').onclick = () => {
+          //peerIDが取れていない時は無効にする
+          if (!peer.open) {
+          return;
+          };
+          const recieverID = document.getElementById('reciever-id').value;
+          mediaConnection = peer.call(recieverID, localStream);
+        };
+        
+        // 切断処理
+        document.getElementById('stop-video').onclick = () => {
+          //peerIDが取れていない時は無効にする
+          if (!peer.open) {
+          return;
+          };
+          //mediaConnectionがないときは無効にする
+          if (!mediaConnection.open) {
+          return;
+          };
+          mediaConnection.close();
+          mediaConnection.off('stream');
+        };
+
+          //着信処理
+        peer.on('call', mediaConnection => {
+          mediaConnection.answer(localStream);
+        });
+
+      </script>   
+</body>
+</html>

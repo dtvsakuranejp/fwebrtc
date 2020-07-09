@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
+  <title>中継カメラ01受信</title>
+</head>
+<body>
+
+    <video id="cam1-video" width="1440" autoplay playsinline></video>
+
+    <p>Your ID: <span id="local-id"></span></p>
+    <div>
+        <input type="text" placeholder="cam1-id" id="cam1-id">
+        <button id="start-video">START</button>
+        <button id="stop-video">STOP</button>
+    </div>
+    <div>
+        <input type="text" id="message-to-cam1">
+        <button id="send-to-cam1">SEND Msg.</button>注：まだ使えない
+    </div>
+
+
+    <script>
+
+        let mediaConnection;
+
+          //Peer作成
+        const peer = new Peer({
+        key: 'e66e65d0-ef54-42c1-8e0b-59b8414586ee',
+        debug: 3
+        });
+
+        //PeerID取得
+        peer.on('open', () => {
+          document.getElementById('local-id').textContent = peer.id;
+        });
+
+        // 発信処理
+        document.getElementById('start-video').onclick = () => {
+          //peerIDが取れていない時は無効にする
+          if (!peer.open) {
+          return;
+          };
+          const cam1ID = document.getElementById('cam1-id').value;
+          mediaConnection = peer.call(cam1ID, null, {
+              videoReceiveEnabled: true,
+              audioRecieveEnabled: true,
+          }); //受信のみモード
+          setEventListener(mediaConnection);
+        };
+
+        // 切断処理
+        document.getElementById('stop-video').onclick = () => {
+          //peerIDが取れていない時は無効にする
+          if (!peer.open) {
+          return;
+          };
+          //mediaConnectionがないときは無効にする
+          if (!mediaConnection.open) {
+          return;
+          };
+          mediaConnection.close();
+          mediaConnection.off('stream');
+        };
+
+        // イベントリスナを設置する関数
+        const setEventListener = mediaConnection => {
+          mediaConnection.on('stream', stream => {
+            // video要素にカメラ映像をセットして再生
+            const videoElm = document.getElementById('cam1-video')
+            videoElm.srcObject = stream;
+            videoElm.play();
+          });
+        }
+
+          //着信処理
+        peer.on('call', mediaConnection => {
+          mediaConnection.answer(null);
+          setEventListener(mediaConnection);
+        });
+      </script>
+</body>
+</html>
