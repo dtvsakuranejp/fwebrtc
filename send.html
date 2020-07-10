@@ -5,44 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
   <title>中継カメラ01送信</title>
+  <style>
+    div.select {
+        display: inline-block;
+        margin: 0 0 1em 0;
+    }
+    label {
+        display: inline-block;
+    }
+    </style>
+
 </head>
 <body>
-    <video id="my-video" width="1440" autoplay muted playsinline></video>
+    <div>
+        <div style="display:inline-block;border-width: 1px;border-color:red;border-style: solid;">
+            <video id="my-video" width="480px" controls autoplay muted playsinline></video>
+        </div>
+    </div>
+    <div><p>マイクとカメラの選択</p>
+        <div class="select">
+            <label for="audioSource">Audio: </label><select id="audioSource"></select>
+        </div>
+        <div class="select">
+            <label for="videoSource">Video: </label><select id="videoSource"></select>
+        </div>
+    </div>
+    <div><p>解像度とフレームレートの選択</p>
+        <div class="select">
+            <label for="resolutinon">Resolution: </label><select id="resolution"></select>
+        </div>
+        <div class="select">
+            <label for="fps">fps: </label><select id="fps"></select>
+        </div>
+    </div>
+
     <p>Your ID: <span id="my-id"></span></p>
     <div>
-        <input type="text" placeholder="reciever-id" id="reciever-id">
+        Reciever ID:<input type="text" placeholder="reciever-id" id="reciever-id">
         <button id="start-video">START</button>
         <button id="stop-video">STOP</button>
     </div>
     <div>
-        <pre class="messages" id="messages"></pre>
+        <pre id="messages"></pre>
     </div>
+
+    
+    <script src="./cameraselect.js" async></script>
+    <script src="./cameraconfig.js" async></script>
 
     <script>
         let localStream;
         let mediaConnection;
-      
-        // カメラ映像取得
-        navigator.mediaDevices.getUserMedia({
-            video: {
-                width: 1920,
-                height: 1080
-                },
-            audio: true})
-          .then( stream => {
-          // 成功時にvideo要素にカメラ映像をセットし、再生
-          const videoElm = document.getElementById('my-video')
-          videoElm.srcObject = stream;
-          videoElm.play();
-          // 着信時に相手にカメラ映像を返せるように、グローバル変数に保存しておく
-          localStream = stream;
-        }).catch( error => {
-          // 失敗時にはエラーログを出力
-          console.error('mediaDevice.getUserMedia() error:', error);
-          return;
-        });
 
-          //Peer作成
+        // メッセージエリアを更新する
+        function logging(v) {
+            const messages = document.getElementById('messages');
+            messages.textContent=v+'\n'+messages.textContent
+        }
+
+        //Peer作成
         const peer = new Peer({
         key: 'e66e65d0-ef54-42c1-8e0b-59b8414586ee',
         debug: 3
@@ -81,6 +102,22 @@
         peer.on('call', mediaConnection => {
           mediaConnection.answer(localStream);
         });
+
+        function start(){
+            setCameraConfig();
+        }
+
+        window.onload=function(){
+            setOptions();
+            audioSelect.onchange = start;
+            videoSelect.onchange = start;
+            resolutionSelect.onchange = start;
+            fpsSelect.onchange = start;
+//            whiteBalanceSelect.onchange = start;
+//            focusModeSelect.onchange = start;
+//            exposureSelect.onchange = start;
+            start();
+        }
 
       </script>   
 </body>

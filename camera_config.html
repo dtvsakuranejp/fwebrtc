@@ -4,28 +4,65 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>カメラ設定</title>
+
+  <style>
+    div.select {
+        display: inline-block;
+        margin: 0 0 1em 0;
+    }
+    label {
+        display: inline-block;
+    }
+</style>
+
+
 </head>
 <body>
-～～～～～～～～～～～～～
-    <video id="my-video" style="width:100%" controls autoplay muted playsinline></video>
-～～～～～～～～～～～～～
-    <script>
-        let localStream;
-      
-        // カメラ映像取得
-        navigator.mediaDevices.getUserMedia({video: true, audio: true})
-          .then( stream => {
-          // 成功時にvideo要素にカメラ映像をセットし、再生
-          const videoElm = document.getElementById('my-video')
-          videoElm.srcObject = stream;
-          videoElm.play();
-          // 着信時に相手にカメラ映像を返せるように、グローバル変数に保存しておく
-          localStream = stream;
-        }).catch( error => {
-          // 失敗時にはエラーログを出力
-          console.error('mediaDevice.getUserMedia() error:', error);
-          return;
-        });
-      </script>
+    <div>
+        <div style="display:inline-block;border-width: 1px;border-color:red;border-style: solid;">
+            <video id="my-video" width="480px" controls autoplay muted playsinline></video>
+        </div>
+    </div>
+    <div><p>マイクとカメラの選択</p>
+        <div class="select">
+            <label for="audioSource">Audio: </label><select id="audioSource"></select>
+        </div>
+        <div class="select">
+            <label for="videoSource">Video: </label><select id="videoSource"></select>
+        </div>
+    </div>
+    <div><p>解像度とフレームレートの選択</p>
+        <div class="select">
+            <label for="resolutinon">Resolution: </label><select id="resolution"></select>
+        </div>
+        <div class="select">
+            <label for="fps">fps: </label><select id="fps"></select>
+        </div>
+    </div>
+    <div><p>その他撮影条件の選択</p>
+        <div class="select">
+            <label for="whiteBalance">WB: </label><select id="whiteBalance"></select>
+        </div>
+        <div class="select">
+            <label for="focusMode">focus: </label><select id="focusMode"></select>
+        </div>
+        <div class="select">
+            <label for="exposure">exposure: </label><select id="exposure"></select>
+        </div>
+    </div>
+    <div>
+        <pre id="messages"></pre>
+    </div>
+
+    <script src="./cameraselect.js" async></script>
+    <script src="./cameraconfig.js" async></script>
+
+<script>
+ function logging(v) {
+    const messages = document.getElementById('messages');
+    messages.textContent=v+'\n'+messages.textContent
+ }
+</script>
+
 </body>
 </html>
