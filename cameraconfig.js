@@ -3,20 +3,24 @@ const resolutionSelect = document.getElementById('resolution');
 const fpsSelect = document.getElementById('fps');
 //const whiteBalanceSelect = document.getElementById('whiteBalance');
 //const focusModeSelect = document.getElementById('focusMode');
-//const exposureSelect = document.getElementById('exposure');
+const exposureCompensationSelect = document.getElementById('exposureCompensation');
 //const configSelectors = [resolutionSelect, fpsSelect, whiteBalanceSelect, focusModeSelect, exposureSelect];
 const configSelectors = [resolutionSelect, fpsSelect];
 
 function setOptions() {
     const cameraOptions = [
-        ['resolution', '1080', '1080p'],
-        ['resolution', '720', '720p'],
-        ['resolution', '480', '480p'],
-        ['fps', '15', '15fps'],
-        ['fps', '30', '30fps'],
-        ['whiteBalance', '', ''],
-        ['focusMode', '', ''],
-        ['exposure', '', '']
+        ['resolution', '1080', '1080p',false],
+        ['resolution', '720', '720p',true],
+        ['resolution', '480', '480p',false],
+        ['fps', '15', '15fps',true],
+        ['fps', '30', '30fps',false],
+        ['whiteBalance', '', '',true],
+        ['focusMode', '', '',true],
+        ['exposureCompensation', '+2', '2',false],
+        ['exposureCompensation', '+1', '1',false],
+        ['exposureCompensation', '0', '0',true],
+        ['exposureCompensation', '-1', '-1',false],
+        ['exposureCompensation', '-2', '-2',false],
     ];
     const values = configSelectors.map(select => select.value);
     configSelectors.forEach(select => {
@@ -25,23 +29,29 @@ function setOptions() {
       }
     });
     cameraOptions.forEach(function(cameraoption) {
+        let select;
         const option = document.createElement('option');
         option.label = cameraoption[2];
         option.value = cameraoption[1];
+        const selected = cameraoption[3];
         if ( cameraoption[0]==='resolution') {
-            resolutionSelect.appendChild(option);
+            select=resolutionSelect;
         } else if (cameraoption[0]==='fps') {
-            fpsSelect.appendChild(option);
+            select=fpsSelect;
+        } else if (cameraoption[0]==='exposureCompensation') {
+          select=exposureCompensationSelect;
 //        } else if (cameraoption[0]==='whiteBalance') {
 //            whiteBalanceSelect.appendChild(option);
 //        } else if (cameraoption[0]==='focusMode') {
 //            focusModeSelect.appendChild(option);
-//        } else if (cameraoption[0]==='exposure') {
-//            exposureSelect.appendChild(option);
         } else {
           // console.log('Some other kind of source/device: ', deviceInfo);
         }
-    });
+        if (!(typeof select === 'undefined')) {
+          select.appendChild(option);
+          select.options[select.options.length-1].selected=selected;
+        }
+      });
     configSelectors.forEach((select, selectorIndex) => {
         if (Array.prototype.slice.call(select.childNodes).some(n => n.value === values[selectorIndex])) {
             select.value = values[selectorIndex];
@@ -68,12 +78,12 @@ function setCameraConfig() {
   }
   const audioSource = audioSelect.value;
   const videoSource = videoSelect.value;
-  const resolutionWidth = resolution.value/9*16;
-  const resolutionHeight = resolution.value;
-  const frameRate = fps.value;
+  const resolutionWidth = resolutionSelect.value/9*16;
+  const resolutionHeight = resolutionSelect.value;
+  const frameRate = fpsSelect.value;
   //const whiteBalance
   //const focusMode
-  //const exposure
+  const exposureCompensation = exposureCompensationSelect.value;
   const constraints = {
     audio: {deviceId: audioSource ? {exact: audioSource} : undefined},
     video: {
@@ -83,7 +93,7 @@ function setCameraConfig() {
         frameRate:{ideal: frameRate},
         //whiteBalance
         //focusMode
-        //exposure
+        exposureCompensation:{ideal: exposureCompensation},
     },
   };
   navigator.mediaDevices.getUserMedia(constraints).then(gotStream).then(gotDevices).then(function(){localStream=stream;}).catch(handleError);
