@@ -19,7 +19,9 @@
 <body>
     <div>
         <div style="display:inline-block;border-width: 1px;border-color:red;border-style: solid;">
-            <video id="my-video" width="480px" controls autoplay muted playsinline></video>
+            <video id="my-video" width="360px" controls autoplay muted playsinline></video>
+        </div>
+        <div id="statusArea" style="display:inline-block;border-width: 1px;border-color:blue;border-style: solid;">
         </div>
     </div>
     <div><p>マイクとカメラの選択</p>
@@ -42,8 +44,14 @@
     <p>Your ID: <span id="my-id"></span></p>
     <div>
         Reciever ID:<input type="text" placeholder="reciever-id" id="reciever-id">
+    </div>
+    <div>
         <button id="start-video">START</button>
         <button id="stop-video">STOP</button>
+    </div>
+    <div>
+        <input type="text" id="message-to-reciever">
+        <button id="send-to-reciever">SEND Msg.</button>
     </div>
     <div>
         <pre id="messages"></pre>
@@ -54,14 +62,22 @@
     <script src="./cameraconfig.js" async></script>
 
     <script>
-        let localStream;
-        let mediaConnection;
+        let localStream=new Object;
 
-        // メッセージエリアを更新する
-        function logging(v) {
-            const messages = document.getElementById('messages');
-            messages.textContent=v+'\n'+messages.textContent
-        }
+        let mediaConnection={
+            open: false,
+        };
+        let dataConnection={
+            open: false,
+        };
+
+        setInterval(() => {
+            if(mediaConnection.open) {
+                document.getElementById('statusArea').textContent="●"+"送信";
+            } else {
+                document.getElementById('statusArea').textContent="○"+"待機";
+            }
+        }, 1000);
 
         //Peer作成
         const peer = new Peer({
@@ -71,36 +87,102 @@
 
         //PeerID取得
         peer.on('open', () => {
-          document.getElementById('my-id').textContent = peer.id;
+            document.getElementById('my-id').textContent = peer.id;
         });
 
-        // 発信処理
-        document.getElementById('start-video').onclick = () => {
-          //peerIDが取れていない時は無効にする
+        //dataConnectionでメッセージ送信
+        function sendMessage(sendText) {
+          //peerIDが取れていない時は処理をキャンセル
           if (!peer.open) {
           return;
           };
-          const recieverID = document.getElementById('reciever-id').value;
-          mediaConnection = peer.call(recieverID, localStream);
+          //まだコネクションができていない場合は先に接続
+          if(!dataConnection.open) {
+            const recieverID = document.getElementById('reciever-id').value;
+            dataConnection = peer.connect(recieverID);
+            setDataEventListener(dataConnection,sendText);
+          } else {
+            //メッセージの送信
+            dataConnection.send(sendText);
+            //自分の画面にも表示
+            logging('送:'+sendText);
+          }
+        }
+
+        //SEND Msg.ボタンでメッセージ送信
+        document.getElementById('send-to-reciever').onclick = () => {
+          const sendText=document.getElementById('message-to-reciever').value;
+          sendMessage(sendText);
+          //テキストボックスをクリア
+          document.getElementById('message-to-reciever').value="";
+        }
+
+        // STARTボタンで発信処理
+        document.getElementById('start-video').onclick = () => {
+            //peerIDが取れていない時は処理をキャンセル
+            if (!peer.open) {
+            return;
+            };
+            //すでに開始していたら処理をキャンセル
+            if(mediaConnection.open) {
+                return;
+            }
+            const recieverID = document.getElementById('reciever-id').value;
+            mediaConnection = peer.call(recieverID, localStream);
+            sendMessage('<中継開始>');
         };
         
-        // 切断処理
+        // STOPボタンで切断処理
         document.getElementById('stop-video').onclick = () => {
-          //peerIDが取れていない時は無効にする
-          if (!peer.open) {
-          return;
-          };
-          //mediaConnectionがないときは無効にする
-          if (!mediaConnection.open) {
-          return;
-          };
-          mediaConnection.close();
-          mediaConnection.off('stream');
+            //peerIDが取れていない時はキャンセルする
+            if (!peer.open) {
+            return;
+            };
+            //mediaConnectionがあるときだけ切断処理する
+            if(mediaConnection.open) {
+                mediaConnection.close(true);
+            }
+            sendMessage('<中継終了>');
         };
 
-          //着信処理
-        peer.on('call', mediaConnection => {
-          mediaConnection.answer(localStream);
+        //ログエリアに追加する関数
+        function logging(textdata) {
+            //ログエリアの先頭に追加
+            const messages = document.getElementById('messages');
+            const now=new Date();
+            const hh=('0' +now.getHours()).slice(-2);
+            const mm=('0' +now.getMinutes()).slice(-2);
+            const ss=('0' +now.getSeconds()).slice(-2);
+            messages.textContent="["+hh+":"+mm+":"+ss+"]"+textdata+'\n'+messages.textContent;
+        }
+        // dataConnectionのイベントリスナを設置する関数
+        const setDataEventListener = function(dataConnection, sendText) {
+            dataConnection.on('data', recieveText => {
+                logging('受:'+recieveText);
+            });
+            dataConnection.on('open', () =>{
+                //相手のIDを表示する
+                document.getElementById('reciever-id').value=dataConnection.remoteId;
+                if (!(typeof sendText === "undefined")) {
+                    dataConnection.send(sendText);
+                    logging('送'+sendText);
+                }
+            });
+        }
+
+        //映像の着信処理
+        peer.on('call', mcon => {
+            mediaConnection=mcon;
+            mediaConnection.answer(localStream);
+            //相手のIDを表示する
+            document.getElementById('reciever-id').value=mediaConnection.remoteId;
+            sendMessage('<着信>');
+        });
+
+        //データの着信処理
+        peer.on('connection', dcon => {
+            dataConnection=dcon;
+            setDataEventListener(dataConnection);
         });
 
         function start(){
