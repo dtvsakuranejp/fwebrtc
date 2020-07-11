@@ -39,8 +39,8 @@ function setOptions() {
             select=resolutionSelect;
         } else if (cameraoption[0]==='fps') {
             select=fpsSelect;
-        } else if (cameraoption[0]==='exposureCompensation') {
-          select=exposureCompensationSelect;
+//        } else if (cameraoption[0]==='exposureCompensation') {
+//          select=exposureCompensationSelect;
 //        } else if (cameraoption[0]==='whiteBalance') {
 //            whiteBalanceSelect.appendChild(option);
 //        } else if (cameraoption[0]==='focusMode') {
