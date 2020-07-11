@@ -40,6 +40,7 @@
             <label for="fps">fps: </label><select id="fps"></select>
         </div>
     </div>
+<!--
     <div><p>露出補正とフォーカス</p>
         <div class="select">
             <label for="exposureCompensation">Exposure: </label><select id="exposureCompensation"></select>
@@ -48,6 +49,8 @@
             <label for="focusMode">Focus: </label><select id="focusMode"></select>
         </div>
     </div>
+    
+-->
 
     <p>Your ID: <span id="my-id"></span></p>
     <div>
@@ -94,9 +97,9 @@
         });
 
         //PeerID取得
-//        peer.on('open', () => {
-//            document.getElementById('my-id').textContent = peer.id;
-//        });
+        peer.on('open', () => {
+            document.getElementById('my-id').textContent = peer.id;
+        });
 
         //dataConnectionでメッセージ送信
         function sendMessage(sendText) {
@@ -206,7 +209,7 @@
             videoSelect.onchange = start;
             resolutionSelect.onchange = start;
             fpsSelect.onchange = start;
-            exposureCompensation.onchange = start;
+//            exposureCompensation.onchange = start;
 //            whiteBalanceSelect.onchange = start;
 //            focusModeSelect.onchange = start;
             start();

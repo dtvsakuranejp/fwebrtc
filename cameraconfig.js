@@ -3,8 +3,9 @@ const resolutionSelect = document.getElementById('resolution');
 const fpsSelect = document.getElementById('fps');
 //const whiteBalanceSelect = document.getElementById('whiteBalance');
 //const focusModeSelect = document.getElementById('focusMode');
-const exposureCompensationSelect = document.getElementById('exposureCompensation');
+//const exposureCompensationSelect = document.getElementById('exposureCompensation');
 //const configSelectors = [resolutionSelect, fpsSelect, whiteBalanceSelect, focusModeSelect, exposureSelect];
+//const configSelectors = [resolutionSelect, fpsSelect, exposureCompensationSelect];
 const configSelectors = [resolutionSelect, fpsSelect];
 
 function setOptions() {
@@ -83,7 +84,7 @@ function setCameraConfig() {
   const frameRate = fpsSelect.value;
   //const whiteBalance
   //const focusMode
-  const exposureCompensation = exposureCompensationSelect.value;
+  //const exposureCompensation = exposureCompensationSelect.value;
   const constraints = {
     audio: {deviceId: audioSource ? {exact: audioSource} : undefined},
     video: {
@@ -93,7 +94,7 @@ function setCameraConfig() {
         frameRate:{ideal: frameRate},
         //whiteBalance
         //focusMode
-        exposureCompensation:{ideal: exposureCompensation},
+        //exposureCompensation:{ideal: exposureCompensation},
     },
   };
   navigator.mediaDevices.getUserMedia(constraints).then(gotStream).then(gotDevices).then(function(){localStream=stream;}).catch(handleError);
