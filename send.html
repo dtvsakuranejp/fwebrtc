@@ -57,16 +57,19 @@
     </div>
 
     <div>
-        <div style="display:inline-block;border-width: 1px;border-color:red;border-style: solid;width:352px;height:198px">
+        <div style="display:inline-block;border-width: 1px;border-color:red;border-style: solid;width:352px;height:198px;">
             <video id="my-video" width="352px" height="198px" controls autoplay muted playsinline></video>
         </div>
-        <div style="display:inline-block;width:250px;vertical-align: top;">
-            <div id="local-camera-status" style="display:inline-block;width:120px;border-width: 1px;border-color:blue;border-style: solid;">
-                ○
-            </div><div id="remote-monitor-status" style="display:inline-block;width:120px;border-width: 1px;border-color:blue;border-style: solid;">
+        <div style="display:inline-block;vertical-align: top;">
+            <div id="local-camera-status" style="display:inline-block;width:240px;border-width: 1px;border-color:blue;border-style: solid;">
                 ○
             </div>
-            <div id="messages" style="width:242px;height:320px;border-width: 1px;border-color:blue;border-style: solid;">
+            <!--
+            <div id="remote-monitor-status" style="display:inline-block;width:120px;border-width: 1px;border-color:blue;border-style: solid;">
+                ○
+            </div>
+            -->
+            <div id="messages" style="width:240px;height:320px;border-width: 1px;border-color:blue;border-style: solid;">
                 aaaaaaaaaaa
             </div>
         </div>
@@ -88,9 +91,9 @@
 
         setInterval(() => {
             if(mediaConnection.open) {
-                document.getElementById('statusArea').textContent="●"+"送信";
+                document.getElementById('local-camera-status').textContent="●"+"送信";
             } else {
-                document.getElementById('statusArea').textContent="○"+"待機";
+                document.getElementById('local-camera-status').textContent="○"+"待機";
             }
         }, 1000);
 
@@ -101,9 +104,9 @@
         });
 
         //PeerID取得
-//        peer.on('open', () => {
-//            document.getElementById('my-id').textContent = peer.id;
-//        });
+        peer.on('open', () => {
+            document.getElementById('my-id').textContent = peer.id;
+        });
 
         //dataConnectionでメッセージ送信
         function sendMessage(sendText) {
@@ -120,7 +123,7 @@
             //メッセージの送信
             dataConnection.send(sendText);
             //自分の画面にも表示
-            logging('送:'+sendText);
+            logging('送:'+sendText,false);
           }
         }
 
@@ -159,28 +162,45 @@
             }
             sendMessage('<中継終了>');
         };
-
+        //HTMLエスケープ処理
+        function escape_html (string) {
+            if(typeof string !== 'string') {
+                return string;
+            }
+            return string.replace(/[&'`"<>]/g, function(match) {
+                return {
+                '&': '&amp;',
+                "'": '&#x27;',
+                '`': '&#x60;',
+                '"': '&quot;',
+                '<': '&lt;',
+                '>': '&gt;',
+                }[match]
+            });
+        }
         //ログエリアに追加する関数
-        function logging(textdata) {
-            //ログエリアの先頭に追加
-            const messages = document.getElementById('messages');
+        function logging(textdata, recieve) {
+            //時刻取得
             const now=new Date();
             const hh=('0' +now.getHours()).slice(-2);
             const mm=('0' +now.getMinutes()).slice(-2);
             const ss=('0' +now.getSeconds()).slice(-2);
-            messages.textContent="["+hh+":"+mm+":"+ss+"]"+textdata+'\n'+messages.textContent;
+            let insertHTML;
+            insertHTML="["+hh+":"+mm+":"+ss+"]"+escape_html(textdata)+'\n'+messages.textContent;
+            insertHTML= recieve ? ('<div style="text-align:right;">'+insertHTML+'</div>') : ('<div style="text-align:left;">'+insertHTML+'</div>')
+            document.getElementById('messages').insertAdjacentHTML('afterbegin', insertHTML);
         }
         // dataConnectionのイベントリスナを設置する関数
         const setDataEventListener = function(dataConnection, sendText) {
             dataConnection.on('data', recieveText => {
-                logging('受:'+recieveText);
+                logging('受:'+recieveText,true);
             });
             dataConnection.on('open', () =>{
                 //相手のIDを表示する
                 document.getElementById('reciever-id').value=dataConnection.remoteId;
                 if (!(typeof sendText === "undefined")) {
                     dataConnection.send(sendText);
-                    logging('送'+sendText);
+                    logging('送'+sendText,false);
                 }
             });
         }

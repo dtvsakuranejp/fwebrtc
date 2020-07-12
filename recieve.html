@@ -5,29 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
   <title>中継カメラ01受信</title>
+  <style>
+    div {
+        margin:0px;
+        padding:0px;
+    }
+    </style>
 </head>
 <body>
-  <div style="display:inline-block;border-width: 1px;border-color:red;border-style: solid;">
-    <video id="cam1-video" width="1920px" autoplay playsinline></video>
-</div>
-    <p>Your ID: <span id="local-id"></span></p>
-    <div>
-        <input type="text" placeholder="cam1-id" id="cam1-id">
+  <!--カメラ操作とメッセージ-->
+  <div>
+    <input type="text" id="message-to-cam1" style="margin: 0.5em;">
+    <button id="send-to-cam1" style="margin: 0.5em;">テキスト送信</button>
+    <button id="start-video" style="margin: 0.5em;">映像 START</button>
+    <button id="stop-video" style="margin: 0.5em;">映像 STOP</button>
+  </div>
+  <div>
+    <div style="display:inline-block;vertical-align: top;">
+      <!--
+      <div id="remote-monitor-status" style="display:inline-block;width:120px;border-width: 1px;border-color:blue;border-style: solid;">
+          ○
       </div>
-      <div>
-          <button id="start-video">START</button>
-        <button id="stop-video">STOP</button>
+      -->
+      <div id="messages" style="width:240px;height:1080px;border-width: 1px;border-color:blue;border-style: solid;">
+          aaaaaaaaaaa
+      </div>
+    </div><div style="display:inline-block;border-width: 1px;border-color:red;border-style: solid;width:1920px;height:1080px;">
+      <video id="cam1-video" width="1920px" height="1080px" autoplay playsinline></video>
     </div>
-    <div>
-        <input type="text" id="message-to-cam1">
-        <button id="send-to-cam1">SEND Msg.</button>
-    </div>
-    <div>
-      <pre id="messages"></pre>
-    </div>
+  </div>
+  <!--通信に必要な情報-->
+  <div>
+    自分のID: <span id="local-id" style="padding: 0em 1em;">未取得</span>
+    相手のID: <input type="text" placeholder="cam1-id" id="cam1-id">
+  </div>
 
-
-    <script>
+  <script>
 
       let mediaConnection={
         open: false,
@@ -62,7 +75,7 @@
             //メッセージの送信
             dataConnection.send(sendText);
             //自分の画面にも表示
-            logging('送:'+sendText);
+            logging('送:'+sendText,false);
           }
         }
 
@@ -116,28 +129,45 @@
             sendMessage('<再生中>');
           });
         }
-
+        //HTMLエスケープ処理
+        function escape_html (string) {
+            if(typeof string !== 'string') {
+                return string;
+            }
+            return string.replace(/[&'`"<>]/g, function(match) {
+                return {
+                '&': '&amp;',
+                "'": '&#x27;',
+                '`': '&#x60;',
+                '"': '&quot;',
+                '<': '&lt;',
+                '>': '&gt;',
+                }[match]
+            });
+        }
         //ログエリアに追加する関数
-        function logging(textdata) {
-            //ログエリアの先頭に追加
-            const messages = document.getElementById('messages');
+        function logging(textdata, recieve) {
+            //時刻取得
             const now=new Date();
             const hh=('0' +now.getHours()).slice(-2);
             const mm=('0' +now.getMinutes()).slice(-2);
             const ss=('0' +now.getSeconds()).slice(-2);
-            messages.textContent="["+hh+":"+mm+":"+ss+"]"+textdata+'\n'+messages.textContent;
+            let insertHTML;
+            insertHTML="["+hh+":"+mm+":"+ss+"]"+escape_html(textdata)+'\n'+messages.textContent;
+            insertHTML= recieve ? ('<div style="text-align:right;">'+insertHTML+'</div>') : ('<div style="text-align:left;">'+insertHTML+'</div>')
+            document.getElementById('messages').insertAdjacentHTML('afterbegin', insertHTML);
         }
         // dataConnectionのイベントリスナを設置する関数
         const setDataEventListener = function(dataConnection, sendText) {
           dataConnection.on('data', recieveText => {
-            logging('受:'+recieveText);
+            logging('受:'+recieveText),true;
           });
           dataConnection.on('open', () =>{
             //相手のIDを表示する
             document.getElementById('cam1-id').value=dataConnection.remoteId;
             if (!(typeof sendText === "undefined")) {
               dataConnection.send(sendText);
-              logging('送'+sendText);
+              logging('送'+sendText,false);
             }
           });
         }
