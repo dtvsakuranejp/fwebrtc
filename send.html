@@ -4,27 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
-  <title>中継カメラ01送信</title>
+  <title>遠隔カメラ01送信</title>
   <style>
-    div.select {
-        display: inline-block;
-        margin: 0 0 1em 0;
-    }
-    label {
-        display: inline-block;
+    div {
+        margin:0px;
+        padding:0px;
     }
     </style>
 
 </head>
 <body>
+    <!--通信に必要な情報-->
     <div>
-        <div style="display:inline-block;border-width: 1px;border-color:red;border-style: solid;">
-            <video id="my-video" width="360px" controls autoplay muted playsinline></video>
-        </div>
-        <div id="statusArea" style="display:inline-block;border-width: 1px;border-color:blue;border-style: solid;">
-        </div>
+        自分のID: <span id="my-id" style="padding: 1em 0em 1em 0em;"></span>
+    <div>
+    <div>
+        相手のID: <input type="text" placeholder="reciever-id" id="reciever-id">
     </div>
-    <div><p>マイクとカメラの選択</p>
+    <!--ビデオのコントロール-->
+    <div><p><b>マイクとカメラの選択</b></p>
         <div class="select">
             <label for="audioSource">Audio: </label><select id="audioSource"></select>
         </div>
@@ -32,12 +30,12 @@
             <label for="videoSource">Video: </label><select id="videoSource"></select>
         </div>
     </div>
-    <div><p>解像度とフレームレートの選択</p>
+    <div><p><b>解像度とフレームレートの選択</b></p>
         <div class="select">
-            <label for="resolutinon">Resolution: </label><select id="resolution"></select>
+            <label for="resolutinon">解像度: </label><select id="resolution"></select>
         </div>
         <div class="select">
-            <label for="fps">fps: </label><select id="fps"></select>
+            <label for="fps">フレームレート: </label><select id="fps"></select>
         </div>
     </div>
 <!--
@@ -49,23 +47,29 @@
             <label for="focusMode">Focus: </label><select id="focusMode"></select>
         </div>
     </div>
-    
 -->
+    <!--カメラ操作とメッセージ-->
+    <div><p><b>送受信</b></p>
+        <button id="start-video" style="margin: 0.5em;">映像 START</button>
+        <button id="stop-video" style="margin: 0.5em;">映像 STOP</button>
+        <input type="text" id="message-to-reciever" style="margin: 0.5em;">
+        <button id="send-to-reciever" style="margin: 0.5em;">テキスト送信</button>
+    </div>
 
-    <p>Your ID: <span id="my-id"></span></p>
     <div>
-        Reciever ID:<input type="text" placeholder="reciever-id" id="reciever-id">
-    </div>
-    <div>
-        <button id="start-video">START</button>
-        <button id="stop-video">STOP</button>
-    </div>
-    <div>
-        <input type="text" id="message-to-reciever">
-        <button id="send-to-reciever">SEND Msg.</button>
-    </div>
-    <div>
-        <pre id="messages"></pre>
+        <div style="display:inline-block;border-width: 1px;border-color:red;border-style: solid;width:352px;height:198px">
+            <video id="my-video" width="352px" height="198px" controls autoplay muted playsinline></video>
+        </div>
+        <div style="display:inline-block;width:250px;vertical-align: top;">
+            <div id="local-camera-status" style="display:inline-block;width:120px;border-width: 1px;border-color:blue;border-style: solid;">
+                ○
+            </div><div id="remote-monitor-status" style="display:inline-block;width:120px;border-width: 1px;border-color:blue;border-style: solid;">
+                ○
+            </div>
+            <div id="messages" style="width:242px;height:320px;border-width: 1px;border-color:blue;border-style: solid;">
+                aaaaaaaaaaa
+            </div>
+        </div>
     </div>
 
     
@@ -97,9 +101,9 @@
         });
 
         //PeerID取得
-        peer.on('open', () => {
-            document.getElementById('my-id').textContent = peer.id;
-        });
+//        peer.on('open', () => {
+//            document.getElementById('my-id').textContent = peer.id;
+//        });
 
         //dataConnectionでメッセージ送信
         function sendMessage(sendText) {
