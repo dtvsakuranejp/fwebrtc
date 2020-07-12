@@ -153,8 +153,8 @@
             const mm=('0' +now.getMinutes()).slice(-2);
             const ss=('0' +now.getSeconds()).slice(-2);
             let insertHTML;
-            insertHTML="["+hh+":"+mm+":"+ss+"]"+escape_html(textdata)+'\n'+messages.textContent;
-            insertHTML= recieve ? ('<div style="text-align:right;">'+insertHTML+'</div>') : ('<div style="text-align:left;">'+insertHTML+'</div>')
+            insertHTML="["+hh+":"+mm+":"+ss+"]"+escape_html(textdata)+'\n';
+            insertHTML= recieve ? ('<div style="text-align:right;"><b>'+insertHTML+'</b></div>') : ('<div style="text-align:left;">'+insertHTML+'</div>');
             document.getElementById('messages').insertAdjacentHTML('afterbegin', insertHTML);
         }
         // dataConnectionのイベントリスナを設置する関数
