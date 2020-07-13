@@ -153,6 +153,9 @@
             }
             const recieverID = document.getElementById('reciever-id').value;
             mediaConnection = peer.call(recieverID, localStream, {videoCodec: codecSelect.value, videoBandwidth: bandwidthSelect.value});
+          console.log('videoCodec: ',codecSelect);
+          console.log('videoBandwidth: ',bandwithSelect);
+          
             sendMessage('<中継開始>');
         };
         
