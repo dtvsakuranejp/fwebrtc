@@ -218,8 +218,8 @@
         //映像の着信処理
         peer.on('call', mcon => {
             mediaConnection=mcon;
-//            mediaConnection = peer.call(recieverID, localStream, {videoCodec: codecSelect.value, videoBandwidth: bandwidthSelect.value});
-            mediaConnection = peer.call(recieverID, localStream, {videoCodec: codecSelect.value});
+//            mediaConnection.answer(localStream, {videoCodec: codecSelect.value, videoBandwidth: bandwidthSelect.value});
+            mediaConnection.answer(localStream, {videoCodec: codecSelect.value});
             //相手のIDを表示する
             document.getElementById('reciever-id').value=mediaConnection.remoteId;
             sendMessage('<着信>');
