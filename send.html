@@ -53,10 +53,12 @@
         <div class="select">
             <label for="codec">動画形式: </label><select id="codec"></select>
         </div>
+<!--
         <div class="select">
             <label for="bandwidth">通信規制: </label><select id="bandwidth"></select>
         </div>
-        <button id="start-video" style="margin: 0.5em;">映像 START</button>
+-->
+    <button id="start-video" style="margin: 0.5em;">映像 START</button>
         <button id="stop-video" style="margin: 0.5em;">映像 STOP</button>
         <input type="text" id="message-to-reciever" style="margin: 0.5em;">
         <button id="send-to-reciever" style="margin: 0.5em;">テキスト送信</button>
@@ -152,10 +154,8 @@
                 return;
             }
             const recieverID = document.getElementById('reciever-id').value;
-            mediaConnection = peer.call(recieverID, localStream, {videoCodec: codecSelect.value, videoBandwidth: bandwidthSelect.value});
-          console.log('videoCodec: ',codecSelect.value);
-          console.log('videoBandwidth: ',bandwidthSelect.value);
-          
+//            mediaConnection = peer.call(recieverID, localStream, {videoCodec: codecSelect.value, videoBandwidth: bandwidthSelect.value});
+            mediaConnection = peer.call(recieverID, localStream, {videoCodec: codecSelect.value});
             sendMessage('<中継開始>');
         };
         
@@ -218,10 +218,8 @@
         //映像の着信処理
         peer.on('call', mcon => {
             mediaConnection=mcon;
-            mediaConnection.answer(localStream, {videoCodec: codecSelect.value, videoBandwidth: bandwidthSelect.value});
-    console.log('videoCodec: ',codecSelect.value);
-    console.log('videoBandwidth: ',bandwidthSelect.value);
-
+//            mediaConnection = peer.call(recieverID, localStream, {videoCodec: codecSelect.value, videoBandwidth: bandwidthSelect.value});
+            mediaConnection = peer.call(recieverID, localStream, {videoCodec: codecSelect.value});
             //相手のIDを表示する
             document.getElementById('reciever-id').value=mediaConnection.remoteId;
             sendMessage('<着信>');
@@ -246,7 +244,7 @@
             videoSelect.onchange = start;
             resolutionSelect.onchange = start;
             fpsSelect.onchange = start;
-//            codecSelect.onchange = start;
+            codecSelect.onchange = start;
 //            exposureCompensation.onchange = start;
 //            whiteBalanceSelect.onchange = start;
 //            focusModeSelect.onchange = start;

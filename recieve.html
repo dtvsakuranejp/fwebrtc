@@ -14,6 +14,20 @@
 </head>
 <body>
   <!--カメラ操作とメッセージ-->
+<!--
+  <div class="select">
+    <label for="codec">動画形式: </label><select id="codec"></select>
+  </div>
+-->
+  <div class="select">
+    <label for="bandwidth">通信規制: </label><select id="bandwidth">
+      <option value="5000" selected>5Mbps</option>
+      <option value="4000" >4Mbps</option>
+      <option value="3000" >3Mbps</option>
+      <option value="2000" >2Mbps</option>
+      <option value="1000" >1Mbps</option>
+    </select>
+  </div>
   <div>
     <input type="text" id="message-to-cam1" style="margin: 0.5em;">
     <button id="send-to-cam1" style="margin: 0.5em;">テキスト送信</button>
@@ -123,6 +137,7 @@
       mediaConnection = peer.call(cam1ID, null, {
           videoReceiveEnabled: true,
           audioRecieveEnabled: true,
+          videoBandwidth: document.getElementById('bandwidth').value
       }); //受信のみモード
       setMediaEventListener(mediaConnection);
       sendMessage('<受信開始>');
@@ -205,6 +220,7 @@
       mediaConnection.answer(null, {
           videoReceiveEnabled: true,
           audioRecieveEnabled: true,
+          videoBandwidth: document.getElementById('bandwidth').value
       });
       setMediaEventListener(mediaConnection);
       //相手のIDを表示する
