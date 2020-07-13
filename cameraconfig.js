@@ -2,12 +2,13 @@
 const resolutionSelect = document.getElementById('resolution');
 const fpsSelect = document.getElementById('fps');
 const codecSelect = document.getElementById('codec');
+const bandwidthSelect = document.getElementById('bandwidth');
 //const whiteBalanceSelect = document.getElementById('whiteBalance');
 //const focusModeSelect = document.getElementById('focusMode');
 //const exposureCompensationSelect = document.getElementById('exposureCompensation');
 //const configSelectors = [resolutionSelect, fpsSelect, whiteBalanceSelect, focusModeSelect, exposureSelect];
 //const configSelectors = [resolutionSelect, fpsSelect, exposureCompensationSelect];
-const configSelectors = [resolutionSelect, fpsSelect, codecSelect];
+const configSelectors = [resolutionSelect, fpsSelect, codecSelect, bandwidthSelect];
 
 function setOptions() {
     const cameraOptions = [
@@ -17,8 +18,13 @@ function setOptions() {
         ['fps', '10', '10fps',false],
         ['fps', '15', '15fps',true],
         ['fps', '30', '30fps',false],
-        ['codec', 'H264', 'H.264',true],
-        ['codec', 'VP9', 'VP9(safari不可)',false],
+        ['codec', 'H264', 'H.264',false],
+        ['codec', 'VP9', 'VP9(safari不可)',true],
+        ['bandwidth', '5000', '5Mbps',true],
+        ['bandwidth', '4000', '4Mbps',false],
+        ['bandwidth', '3000', '3Mbps',false],
+        ['bandwidth', '2000', '2Mbps',false],
+        ['bandwidth', '1000', '1Mbps',false],
         ['whiteBalance', '', '',true],
         ['focusMode', '', '',true],
         ['exposureCompensation', '+2', '2',false],
@@ -45,6 +51,8 @@ function setOptions() {
             select=fpsSelect;
         } else if (cameraoption[0]==='codec') {
             select=codecSelect;
+        } else if (cameraoption[0]==='bandwidth') {
+          select=bandwidthSelect;
 //        } else if (cameraoption[0]==='exposureCompensation') {
 //          select=exposureCompensationSelect;
 //        } else if (cameraoption[0]==='whiteBalance') {
