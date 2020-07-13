@@ -202,7 +202,10 @@
     //映像の着信処理
     peer.on('call', mcon => {
       mediaConnection=mcon;
-      mediaConnection.answer(null);
+      mediaConnection.answer(null, {
+          videoReceiveEnabled: true,
+          audioRecieveEnabled: true,
+      });
       setMediaEventListener(mediaConnection);
       //相手のIDを表示する
       document.getElementById('cam1-id').value=mediaConnection.remoteId;
