@@ -154,7 +154,7 @@
             const recieverID = document.getElementById('reciever-id').value;
             mediaConnection = peer.call(recieverID, localStream, {videoCodec: codecSelect.value, videoBandwidth: bandwidthSelect.value});
           console.log('videoCodec: ',codecSelect.value);
-          console.log('videoBandwidth: ',bandwithSelect.value);
+          console.log('videoBandwidth: ',bandwidthSelect.value);
           
             sendMessage('<中継開始>');
         };
@@ -219,6 +219,9 @@
         peer.on('call', mcon => {
             mediaConnection=mcon;
             mediaConnection.answer(localStream, {videoCodec: codecSelect.value, videoBandwidth: bandwidthSelect.value});
+    console.log('videoCodec: ',codecSelect.value);
+    console.log('videoBandwidth: ',bandwidthSelect.value);
+
             //相手のIDを表示する
             document.getElementById('reciever-id').value=mediaConnection.remoteId;
             sendMessage('<着信>');
