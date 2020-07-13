@@ -1,20 +1,24 @@
 //const videoElement = document.getElementById('my-video');
 const resolutionSelect = document.getElementById('resolution');
 const fpsSelect = document.getElementById('fps');
+const codecSelect = document.getElementById('codec');
 //const whiteBalanceSelect = document.getElementById('whiteBalance');
 //const focusModeSelect = document.getElementById('focusMode');
 //const exposureCompensationSelect = document.getElementById('exposureCompensation');
 //const configSelectors = [resolutionSelect, fpsSelect, whiteBalanceSelect, focusModeSelect, exposureSelect];
 //const configSelectors = [resolutionSelect, fpsSelect, exposureCompensationSelect];
-const configSelectors = [resolutionSelect, fpsSelect];
+const configSelectors = [resolutionSelect, fpsSelect, codecSelect];
 
 function setOptions() {
     const cameraOptions = [
-        ['resolution', '1080', '1080p',false],
-        ['resolution', '720', '720p',true],
+        ['resolution', '1080', '1080p',true],
+        ['resolution', '720', '720p',false],
         ['resolution', '480', '480p',false],
+        ['fps', '10', '10fps',false],
         ['fps', '15', '15fps',true],
         ['fps', '30', '30fps',false],
+        ['codec', 'H264', 'H.264',true],
+        ['codec', 'VP9', 'VP9(safari不可)',false],
         ['whiteBalance', '', '',true],
         ['focusMode', '', '',true],
         ['exposureCompensation', '+2', '2',false],
@@ -39,6 +43,8 @@ function setOptions() {
             select=resolutionSelect;
         } else if (cameraoption[0]==='fps') {
             select=fpsSelect;
+        } else if (cameraoption[0]==='codec') {
+            select=codecSelect;
 //        } else if (cameraoption[0]==='exposureCompensation') {
 //          select=exposureCompensationSelect;
 //        } else if (cameraoption[0]==='whiteBalance') {
