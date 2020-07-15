@@ -12,11 +12,9 @@ function applyExposureTime() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const exposureTime = exposureTimeSlider.value;
 
-    let constraints = track.getConstraints();
+    let constraints = { exposureTime: Number(exposureTime) };
     console.log(constraints);
     console.log(constraints.exposureTime);
-    
-    constraints.exposureTime = Number(exposureTime);
     track.applyConstraints(constraints);
 }
 
