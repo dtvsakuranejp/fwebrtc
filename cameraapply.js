@@ -15,9 +15,8 @@ function applyExposureTime() {
     let settings = track.getSettings();
     console.log(settings);
 
-    let constraints = { advanced : [ {exposureTime: Number(exposureTime) } ] };
+    let constraints = { exposureMode: 'manual', exposureTime: Number(exposureTime) };
     console.log(constraints);
-    console.log(constraints.exposureTime);
     track.applyConstraints(constraints);
 
     settings = track.getSettings();
