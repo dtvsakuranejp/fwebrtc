@@ -28,7 +28,7 @@ function applyCameraSettings() {
     const capabilities = track.getCapabilities();
     if ('exposureTime' in capabilities) {
         exposureTimeSlider.oninput = applyExposureTime(track, exposureTimeSlider.value);
-//    updateCameraStatusTimer = setInterval(getCameraSettings(localStream),500)    
+    updateCameraStatusTimer = setInterval(getCameraSettings(localStream),500)    
     }
 }
 
