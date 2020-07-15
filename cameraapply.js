@@ -102,7 +102,7 @@ function updateCameraSettings() {
     const track = localStream.getVideoTracks()[0];//localstreamが未定義だと失敗する
     const capabilities = track.getCapabilities();
     const settings = track.getSettings();
-  
+  console.log(settings);
     //明るさが有効かどうか判定
     if ('exposureCompensation' in capabilities) {
         exposureCompensationValue.textContent = settings.exposureCompensation;
