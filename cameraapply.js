@@ -37,6 +37,8 @@ function getCameraSettings(track) {
     console.log(track);
     const capabilities = track.getCapabilities();
     const settings = track.getSettings();
+    console.log(capabilities);
+    console.log(settings);
   
     //明るさが有効かどうか判定
     if (!('exposureTime' in capabilities)) {
@@ -46,7 +48,6 @@ function getCameraSettings(track) {
         exposureTimeSlider.min = capabilities.exposureTime.min;
         exposureTimeSlider.max = capabilities.exposureTime.max;
         exposureTimeSlider.step = (capabilities.exposureTime.step==0) ? 1 : capabilities.exposureTime.step;
-        console.log(settings);
         exposureTimeSlider.value = settings.exposureTime;
         exposureTimeNumber.textContent = '使えます'+settings.exposureTime;
         exposureTimeSlider.hidden = false;
