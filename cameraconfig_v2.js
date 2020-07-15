@@ -20,13 +20,6 @@ function setOptions() {
         ['fps', '30', '30fps',false],
         ['codec', 'H264', 'H.264',false],
         ['codec', 'VP9', 'VP9(safari不可)',true],
-        ['whiteBalance', '', '',true],
-        ['focusMode', '', '',true],
-        ['exposureCompensation', '+2', '2',false],
-        ['exposureCompensation', '+1', '1',false],
-        ['exposureCompensation', '0', '0',true],
-        ['exposureCompensation', '-1', '-1',false],
-        ['exposureCompensation', '-2', '-2',false],
     ];
     const values = configSelectors.map(select => select.value);
     configSelectors.forEach(select => {
@@ -46,12 +39,6 @@ function setOptions() {
             select=fpsSelect;
         } else if (cameraoption[0]==='codec') {
             select=codecSelect;
-//        } else if (cameraoption[0]==='exposureCompensation') {
-//          select=exposureCompensationSelect;
-//        } else if (cameraoption[0]==='whiteBalance') {
-//            whiteBalanceSelect.appendChild(option);
-//        } else if (cameraoption[0]==='focusMode') {
-//            focusModeSelect.appendChild(option);
         } else {
           // console.log('Some other kind of source/device: ', deviceInfo);
         }

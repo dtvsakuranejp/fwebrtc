@@ -1,21 +1,23 @@
-const exposureTimeSlider = document.getElementById('exposureTime');
-const exposureTimeNumber = document.getElementById('exposureTimeNumber');
+//const exposureTimeSlider = document.getElementById('exposureTime');
+//const exposureTimeNumber = document.getElementById('exposureTimeNumber');
 const sceneModeSelect = document.getElementById('sceneMode');
-const whiteBalanceSelect = document.getElementById('whiteBalance');
+//const whiteBalanceSelect = document.getElementById('whiteBalance');
 const focusModeSelect = document.getElementById('focusMode');
-const exposureCompensationSelect = document.getElementById('exposureCompensation');
+//const exposureCompensationSelect = document.getElementById('exposureCompensation');
+const exposureCompensationSlider = document.getElementById('exposureCompensation');
+const exposureCompensationNumber = document.getElementById('exposureCompensationNumber');
 let updateCameraStatusTimer;
 
-//明るさを反映
-function applyExposureTime() {
-    console.log('イベント発生');
+//露出補正を反映
+function applyExposureCompensation() {
+    console.log('exposureCompensationイベント発生');
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    const exposureTime = exposureTimeSlider.value;
+    const exposureCompensation = exposureCompensationSlider.value;
 
     let settings = track.getSettings();
     console.log(settings);
 
-    let constraints = { advanced: [ {exposureMode: 'manual', exposureTime: Number(exposureTime) } ] };
+    let constraints = { exposureCompensation: Number(exposureCompensation) };
     console.log(constraints);
     track.applyConstraints(constraints);
 
@@ -27,7 +29,7 @@ function applyExposureTime() {
 //設定に付けているイベントを削除する
 function removeApplyCameraEvent() {
     console.log('イベントリスナ削除');
-    exposureTimeSlider.removeEventListener('oninput',applyExposureTime);
+    exposureCompensationSlider.removeEventListener('oninput',applyExposureCompensation);
     if (!(typeof updateCameraStatusTimer === 'undefined')) {
         clearInterval(updateCameraStatusTimer);
     }
@@ -40,10 +42,9 @@ function applyCameraSettings() {
     //イベントリスナ追加
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const capabilities = track.getCapabilities();
-    if ('exposureTime' in capabilities) {
+    if ('exposureCompensation' in capabilities) {
         console.log('イベントリスナ設置');
-//        exposureTimeSlider.addEventListener('oninput',applyExposureTime);
-        exposureTimeSlider.oninput=applyExposureTime;
+        exposureCompensationSlider.oninput=applyExposureCompensation;
         updateCameraStatusTimer = setInterval(function(){getCameraSettings()},1000);
     }
 }
@@ -58,15 +59,15 @@ function getCameraSettings() {
 //    console.log(settings);
   
     //明るさが有効かどうか判定
-    if (!('exposureTime' in capabilities)) {
-        exposureTimeSlider.hidden = true;
-        exposureTimeNumber.textContent='使えません';
+    if (!('exposureCompensation' in capabilities)) {
+        exposureCompensationSlider.hidden = true;
+        exposureCompensationNumber.textContent='使えません';
     } else {
-        exposureTimeSlider.min = capabilities.exposureTime.min;
-        exposureTimeSlider.max = capabilities.exposureTime.max;
-        exposureTimeSlider.step = (capabilities.exposureTime.step==0) ? 1 : capabilities.exposureTime.step;
-        exposureTimeSlider.value = settings.exposureTime;
-        exposureTimeNumber.textContent = '使えます'+settings.exposureTime;
-        exposureTimeSlider.hidden = false;
+        exposureCompensationSlider.min = capabilities.exposureCompensation.min;
+        exposureCompensationSlider.max = capabilities.exposureCompensation.max;
+        exposureCompensationSlider.step = (capabilities.exposureCompensation.step==0) ? 1 : capabilities.exposureCompensation.step;
+        exposureCompensationSlider.value = settings.exposureCompensation;
+        exposureCompensationNumber.textContent = '使えます'+settings.exposureCompensation;
+        exposureCompensationSlider.hidden = false;
     }
 }
