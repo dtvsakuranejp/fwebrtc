@@ -240,34 +240,33 @@ function updateCameraSettings() {
     const capabilities = track.getCapabilities();
     const constraints = track.getConstraints();
     const settings = track.getSettings();
-  console.log(settings);
-    //明るさが有効かどうか判定
+//  console.log(settings);
     if ('sceneMode' in capabilities) {
-        sceneModeSelectValue.textContent =  constraints.sceneMode +'->'+ settings.sceneMode;
+        sceneModeSelectValue.textContent =  sceneModeSelect.value +'->'+ constraints.sceneMode +'->'+ settings.sceneMode;
     }
     if ('focusMode' in capabilities) {
-        focusModeSelectValue.textContent = constraints.focusMode +'->'+ settings.focusMode;
+        focusModeSelectValue.textContent = focusModeSelect.value +'->'+ constraints.focusMode +'->'+ settings.focusMode;
     }
     if ('exposureMode' in capabilities) {
-        exposureModeSelectValue.textContent =  constraints.exposureMode +'->'+ settings.exposureMode;
+        exposureModeSelectValue.textContent =  exposureModeSelect.value +'->'+ constraints.exposureMode +'->'+ settings.exposureMode;
     }
     if ('whiteBalanceMode' in capabilities) {
-        whiteBalanceModeSelectValue.textContent = constraints.whiteBalanceMode +'->'+ settings.whiteBalanceMode;
+        whiteBalanceModeSelectValue.textContent = whiteBalanceModeSelect.value +'->'+ constraints.whiteBalanceMode +'->'+ settings.whiteBalanceMode;
     }
 
     if ('focusDistance' in capabilities) {
-        focusDistanceSliderValue.textContent = constraints.focusDistance +'->'+ settings.focusDistance;
+        focusDistanceSliderValue.textContent = focusDistanceSlider.value +'->'+ constraints.focusDistance +'->'+ settings.focusDistance;
     }
     if ('exposureTime' in capabilities) {
-        exposureTimeSliderValue.textContent = constraints.exposureTime +'->'+ settings.exposureTime;
+        exposureTimeSliderValue.textContent = exposureTimeSlider.value +'->'+ constraints.exposureTime +'->'+ settings.exposureTime;
     }
     if ('colorTemperature' in capabilities) {
-        colorTemperatureSliderValue.textContent = constraints.colorTemperature +'->'+ settings.colorTemperature;
+        colorTemperatureSliderValue.textContent = colorTemperatureSlider.value +'->'+ constraints.colorTemperature +'->'+ settings.colorTemperature;
     }
     if ('exposureCompensation' in capabilities) {
-        exposureCompensationSliderValue.textContent = constraints.exposureCompensation +'->'+ settings.exposureCompensation;
+        exposureCompensationSliderValue.textContent = exposureCompensationSlider.value +'->'+ constraints.exposureCompensation +'->'+ settings.exposureCompensation;
     }
     if ('iso' in capabilities) {
-        isoSliderValue.textContent = constraints.iso +'->'+ settings.iso;
+        isoSliderValue.textContent = isoSlider.value +'->'+ constraints.iso +'->'+ settings.iso;
     }
 }
