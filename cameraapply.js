@@ -14,10 +14,9 @@ function applyExposureTime() {
 
     let constraints = track.getConstraints();
     console.log(constraints);
-    console.log(constraints.advanced);
-    console.log(constraints.exposurTime);
+    console.log(constraints.exposureTime);
     
-    constraints.exposureTime = exposureTime;
+    constraints.exposureTime = Number(exposureTime);
     track.applyConstraints(constraints);
 }
 
