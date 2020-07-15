@@ -29,6 +29,7 @@ function applyCameraSettings() {
     //イベントリスナ追加
     const capabilities = track.getCapabilities();
     if ('exposureTime' in capabilities) {
+        console.log('イベントリスナ設置');
         exposureTimeSlider.oninput = applyExposureTime(track, exposureTimeSlider.value);
         updateCameraStatusTimer = setInterval(getCameraSettings(track),500);
     }
