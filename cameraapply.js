@@ -65,39 +65,39 @@ function applyFocusDistance() {
     let constraints = { advanced: [ { focusMode: "manual", focusDistance: Number(focusDistance) }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
-//露出時間を反映
+//露出時間を反映、参考資料によりmanualを追加
 function applyExposureTime() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const exposureTime = exposureTimeSlider.value;
-    let constraints = { advanced: [ { exposureTime: Number(exposureTime) }] };
+    let constraints = { advanced: [ { exposureMode: "manual", exposureTime: Number(exposureTime) }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
-//色温度を反映
+//色温度を反映、参考資料によりmanualを追加
 function applyColorTemperature() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const colorTemperature = colorTemperatureSlider.value;
-    let constraints = { advanced: [ { colorTemperature: Number(colorTemperature) }] };
+    let constraints = { advanced: [ { whiteBalanceMode: "manual", colorTemperature: Number(colorTemperature) }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
-//露出補正を反映
+//露出補正を反映、参考資料によりcontinuousを追加
 function applyExposureCompensation() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const exposureCompensation = exposureCompensationSlider.value;
-    let constraints = { advanced: [ { exposureCompensation: Number(exposureCompensation) }] };
+    let constraints = { advanced: [ { exposureMode:"continuous", exposureCompensation: Number(exposureCompensation) }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
-//isoを反映
+//isoを反映、参考資料によりmanualを追加
 function applyIso() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const iso = isoSlider.value;
-    let constraints = { advanced: [ { iso: Number(iso) }] };
+    let constraints = { advanced: [ { exposureMode: "manual", iso: Number(iso) }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
-//brightnessを反映
+//brightnessを反映、参考資料によりmanualを追加
 function applyBrightness() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const brightness = brightnessSlider.value;
-    let constraints = { advanced: [ { iso: Number(brightness) }] };
+    let constraints = { advanced: [ { exposureMode: "manual", brightness: Number(brightness) }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 
