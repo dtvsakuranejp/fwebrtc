@@ -72,7 +72,7 @@ function getCameraSettings() {
   
     if (!('exposureCompensation' in capabilities)) {
         exposureCompensationSlider.hidden = true;
-        exposureCompensationNumber.textContent='使えません';
+        exposureCompensationValue.textContent='使えません';
     } else {
         exposureCompensationSlider.min = capabilities.exposureCompensation.min;
         exposureCompensationSlider.max = capabilities.exposureCompensation.max;
@@ -84,13 +84,13 @@ function getCameraSettings() {
     if (!('focusMode' in capabilities)) {
         focusModeSelect.hidden=true;
         focusModeSelectValue.textContent='使えません';
-    else {
+    } else {
         focusModeSelectValue.textContent=settings.focusMode;
     }
     if (!('sceneMode' in capabilities)) {
         sceneModeSelect.hidden=true;
         sceneModeSelectValue.textContent='使えません';
-    else {
+    } else {
         sceneModeSelectValue.textContent=settings.sceneMode;
     }
 }
@@ -102,12 +102,12 @@ function updateCameraSettings() {
   
     //明るさが有効かどうか判定
     if ('exposureCompensation' in capabilities) {
-        exposureCompensationNumber.textContent = settings.exposureCompensation;
+        exposureCompensationValue.textContent = settings.exposureCompensation;
     }
     if ('focusMode' in capabilities) {
-        exposureCompensationNumber.textContent = settings.focusMode;
+        focusModeSelectValue.textContent = settings.focusMode;
     }
     if ('sceneMode' in capabilities) {
-        exposureCompensationNumber.textContent = settings.sceneMode;
+        sceneModeSelectValue.textContent = settings.sceneMode;
     }
 }
