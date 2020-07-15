@@ -7,13 +7,12 @@ const exposureCompensationSelect = document.getElementById('exposureCompensation
 let updateCameraStatusTimer;
 
 //明るさを反映
-function applyExposureTime(track, value) {
+function applyExposureTime() {
     console.log('イベント発生');
-    console.log(track);
-    console.log(value);
-    track.applyConstraints({advanced: [ {exposureTime: value} ]});
-    const settings = track.getSettings();
-    console.log(settings);
+    const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
+    track.applyConstraints({advanced: [ {exposureTime: exposureTimeSlider.value} ]});
+//    const settings = track.getSettings();
+//    console.log(settings);
 }
 
 //設定に付けているイベントを削除する
@@ -30,11 +29,11 @@ function applyCameraSettings() {
     getCameraSettings();
 
     //イベントリスナ追加
-    const track = localStream.getVideoTracks()[0];//localstreamが未定義だと失敗する
+    const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const capabilities = track.getCapabilities();
     if ('exposureTime' in capabilities) {
         console.log('イベントリスナ設置');
-        exposureTimeSlider.addEventListener('onchange',applyExposureTime(track, exposureTimeSlider.value));
+        exposureTimeSlider.addEventListener('onchange',function(){applyExposureTime()});
         updateCameraStatusTimer = setInterval(function(){getCameraSettings()},1000);
     }
 }
@@ -42,11 +41,11 @@ function applyCameraSettings() {
 //streamの現在をカメラ設定に反映する
 function getCameraSettings() {
     const track = localStream.getVideoTracks()[0];//localstreamが未定義だと失敗する
-    console.log(track);
+//    console.log(track);
     const capabilities = track.getCapabilities();
     const settings = track.getSettings();
-    console.log(capabilities);
-    console.log(settings);
+//    console.log(capabilities);
+//    console.log(settings);
   
     //明るさが有効かどうか判定
     if (!('exposureTime' in capabilities)) {
