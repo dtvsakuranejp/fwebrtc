@@ -3,27 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>カメラ設定</title>
-
+  <script src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
+  <title>遠隔カメラ01送信</title>
   <style>
-    div.select {
-        display: inline-block;
-        margin: 0 0 1em 0;
+    div {
+        margin:0px;
+        padding:0px;
     }
-    label {
-        display: inline-block;
-    }
-</style>
-
+    </style>
 
 </head>
 <body>
+    <!--通信に必要な情報-->
     <div>
-        <div style="display:inline-block;border-width: 1px;border-color:red;border-style: solid;">
-            <video id="my-video" width="480px" controls autoplay muted playsinline></video>
-        </div>
+        自分のID: <span id="my-id" style="padding: 1em 0em 1em 0em;">未取得</span>
+    <div>
+    <div>
+        相手のID: <input type="text" placeholder="reciever-id" id="reciever-id">
     </div>
-    <div><p>マイクとカメラの選択</p>
+    <!--ビデオのコントロール-->
+    <div><p><b>マイクとカメラの選択</b></p>
         <div class="select">
             <label for="audioSource">Audio: </label><select id="audioSource"></select>
         </div>
@@ -31,38 +30,233 @@
             <label for="videoSource">Video: </label><select id="videoSource"></select>
         </div>
     </div>
-    <div><p>解像度とフレームレートの選択</p>
+    <div><p><b>解像度とフレームレートの選択</b></p>
         <div class="select">
-            <label for="resolutinon">Resolution: </label><select id="resolution"></select>
+            <label for="resolutinon">解像度: </label><select id="resolution"></select>
         </div>
         <div class="select">
-            <label for="fps">fps: </label><select id="fps"></select>
-        </div>
-    </div>
-    <div><p>その他撮影条件の選択</p>
-        <div class="select">
-            <label for="whiteBalance">WB: </label><select id="whiteBalance"></select>
-        </div>
-        <div class="select">
-            <label for="focusMode">focus: </label><select id="focusMode"></select>
-        </div>
-        <div class="select">
-            <label for="exposure">exposure: </label><select id="exposure"></select>
+            <label for="fps">フレームレート: </label><select id="fps"></select>
         </div>
     </div>
+
+    <!--カメラ操作とメッセージ-->
+    <div><p><b>送受信</b></p>
+        <div class="select">
+            <label for="codec">動画形式: </label><select id="codec"></select>
+        </div>
+<!--
+        <div class="select">
+            <label for="bandwidth">通信規制: </label><select id="bandwidth"></select>
+        </div>
+-->
+    <button id="start-video" style="margin: 0.5em;">映像 START</button>
+        <button id="stop-video" style="margin: 0.5em;">映像 STOP</button>
+        <input type="text" id="message-to-reciever" style="margin: 0.5em;">
+        <button id="send-to-reciever" style="margin: 0.5em;">テキスト送信</button>
+    </div>
+
     <div>
-        <pre id="messages"></pre>
+        <div style="display:inline-block;border-width: 1px;border-color:red;border-style: solid;width:352px;height:198px;">
+            <div>
+                <video id="my-video" width="352px" height="198px" controls autoplay muted playsinline></video>
+            </div>
+            <div>
+                <label for="brightness">個別明るさ: </label><input type="range" id="brightness"></select>
+            </div>
+            <div>
+                <label for="sceneMode">一括シーン: </label><select id="sceneMode"></select>
+            </div>
+            <div>
+                <label for="whiteBalance">個別WB: </label><select id="whiteBalance"></select>
+            </div>
+            <div>
+                <label for="focusMode">個別Focus: </label><select id="focusMode"></select>
+            </div>
+            <div>
+                <label for="exposureCompensation">個別露出: </label><select id="exposureCompensation"></select>
+            </div>
+        </div>
+        <div style="display:inline-block;vertical-align: top;">
+            <div id="local-camera-status" style="display:inline-block;width:240px;border-width: 1px;border-color:blue;border-style: solid;">
+                ○
+            </div>
+            <!--
+            <div id="remote-monitor-status" style="display:inline-block;width:120px;border-width: 1px;border-color:blue;border-style: solid;">
+                ○
+            </div>
+            -->
+            <div id="messages" style="width:240px;height:320px;border-width: 1px;border-color:blue;border-style: solid;">
+                （ 通 信 欄 ）
+            </div>
+        </div>
     </div>
 
+    
     <script src="./cameraselect.js" async></script>
-    <script src="./cameraconfig.js" async></script>
+    <script src="./cameraconfig_v2.js" async></script>
+    <script src="./cameraapply.js" async></script>
 
-<script>
- function logging(v) {
-    const messages = document.getElementById('messages');
-    messages.textContent=v+'\n'+messages.textContent
- }
-</script>
+    <script>
+        let localStream=new Object;
 
+        let mediaConnection={
+            open: false,
+        };
+        let dataConnection={
+            open: false,
+        };
+
+        setInterval(() => {
+            if(mediaConnection.open) {
+                document.getElementById('local-camera-status').textContent="●"+"送信";
+            } else {
+                document.getElementById('local-camera-status').textContent="○"+"待機";
+            }
+        }, 1000);
+
+        //Peer作成
+//        const peer = new Peer({
+//        key: 'e66e65d0-ef54-42c1-8e0b-59b8414586ee',
+//        debug: 3
+//        });
+
+        //PeerID取得
+//        peer.on('open', () => {
+//            document.getElementById('my-id').textContent = peer.id;
+//        });
+
+        //dataConnectionでメッセージ送信
+        function sendMessage(sendText) {
+          //peerIDが取れていない時は処理をキャンセル
+          if (!peer.open) {
+          return;
+          };
+          //まだコネクションができていない場合は先に接続
+          if(!dataConnection.open) {
+            const recieverID = document.getElementById('reciever-id').value;
+            dataConnection = peer.connect(recieverID);
+            setDataEventListener(dataConnection,sendText);
+          } else {
+            //メッセージの送信
+            dataConnection.send(sendText);
+            //自分の画面にも表示
+            logging('送:'+sendText,false);
+          }
+        }
+
+        //SEND Msg.ボタンでメッセージ送信
+        document.getElementById('send-to-reciever').onclick = () => {
+          const sendText=document.getElementById('message-to-reciever').value;
+          sendMessage(sendText);
+          //テキストボックスをクリア
+          document.getElementById('message-to-reciever').value="";
+        }
+
+        // STARTボタンで発信処理
+        document.getElementById('start-video').onclick = () => {
+            //peerIDが取れていない時は処理をキャンセル
+            if (!peer.open) {
+            return;
+            };
+            //すでに開始していたら処理をキャンセル
+            if(mediaConnection.open) {
+                return;
+            }
+            const recieverID = document.getElementById('reciever-id').value;
+//            mediaConnection = peer.call(recieverID, localStream, {videoCodec: codecSelect.value, videoBandwidth: bandwidthSelect.value});
+            mediaConnection = peer.call(recieverID, localStream, {videoCodec: codecSelect.value});
+            sendMessage('<中継開始>');
+        };
+        
+        // STOPボタンで切断処理
+        document.getElementById('stop-video').onclick = () => {
+            //peerIDが取れていない時はキャンセルする
+            if (!peer.open) {
+            return;
+            };
+            //mediaConnectionがあるときだけ切断処理する
+            if(mediaConnection.open) {
+                mediaConnection.close(true);
+            }
+            sendMessage('<中継終了>');
+        };
+        //HTMLエスケープ処理
+        function escape_html (string) {
+            if(typeof string !== 'string') {
+                return string;
+            }
+            return string.replace(/[&'`"<>]/g, function(match) {
+                return {
+                '&': '&amp;',
+                "'": '&#x27;',
+                '`': '&#x60;',
+                '"': '&quot;',
+                '<': '&lt;',
+                '>': '&gt;',
+                }[match]
+            });
+        }
+        //ログエリアに追加する関数
+        function logging(textdata, recieve) {
+            //時刻取得
+            const now=new Date();
+            const hh=('0' +now.getHours()).slice(-2);
+            const mm=('0' +now.getMinutes()).slice(-2);
+            const ss=('0' +now.getSeconds()).slice(-2);
+            let insertHTML;
+            insertHTML="["+hh+":"+mm+":"+ss+"]"+escape_html(textdata);
+            insertHTML= recieve ? ('<div style="color:black;">'+insertHTML+'</div>')
+                                : ('<div style="color:gray;font-size:small; ">'+insertHTML+'</div>');
+            document.getElementById('messages').insertAdjacentHTML('afterbegin', insertHTML);
+        }
+        // dataConnectionのイベントリスナを設置する関数
+        const setDataEventListener = function(dataConnection, sendText) {
+            dataConnection.on('data', recieveText => {
+                logging('受:'+recieveText,true);
+            });
+            dataConnection.on('open', () =>{
+                //相手のIDを表示する
+                document.getElementById('reciever-id').value=dataConnection.remoteId;
+                if (!(typeof sendText === "undefined")) {
+                    dataConnection.send(sendText);
+                    logging('送'+sendText,false);
+                }
+            });
+        }
+
+        //映像の着信処理
+//        peer.on('call', mcon => {
+//            mediaConnection=mcon;
+////            mediaConnection.answer(localStream, {videoCodec: codecSelect.value, videoBandwidth: bandwidthSelect.value});
+//            mediaConnection.answer(localStream, {videoCodec: codecSelect.value});
+//            //相手のIDを表示する
+//            document.getElementById('reciever-id').value=mediaConnection.remoteId;
+//            sendMessage('<着信>');
+//        });
+
+        //データの着信処理
+//        peer.on('connection', dcon => {
+//            dataConnection=dcon;
+//            setDataEventListener(dataConnection);
+//        });
+
+        function start(){
+            setCameraConfig();
+        }
+
+        window.onload=function(){
+            setOptions();
+            audioSelect.onchange = start;
+            videoSelect.onchange = start;
+            resolutionSelect.onchange = start;
+            fpsSelect.onchange = start;
+            codecSelect.onchange = start;
+//            exposureCompensation.onchange = start;
+//            whiteBalanceSelect.onchange = start;
+//            focusModeSelect.onchange = start;
+            start();
+        }
+
+      </script>   
 </body>
 </html>
