@@ -25,6 +25,9 @@ const exposureCompensationSliderValue = document.getElementById('exposureCompens
 const isoSlider = document.getElementById('iso');
 const isoSliderValue = document.getElementById('isoValue');
 
+const brightnessSlider = document.getElementById('brightness');
+const brightnessSliderValue = document.getElementById('brightnessValue');
+
 //let updateCameraStatusTimer;
 
 //シーンモードを反映
@@ -55,11 +58,11 @@ function applyWhiteBalanceMode() {
     let constraints = { advanced: [ { whiteBalanceMode: whiteBalanceMode }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
-//フォーカス距離を反映
+//フォーカス距離を反映、参考資料によりmanualを追加
 function applyFocusDistance() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const focusDistance = focusDistanceSlider.value;
-    let constraints = { advanced: [ { focusDistance: Number(focusDistance) }] };
+    let constraints = { advanced: [ { focusMode: "manual", focusDistance: Number(focusDistance) }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 //露出時間を反映
@@ -90,10 +93,17 @@ function applyIso() {
     let constraints = { advanced: [ { iso: Number(iso) }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
+//brightnessを反映
+function applyBrightness() {
+    const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
+    const brightness = brightnessSlider.value;
+    let constraints = { advanced: [ { iso: Number(brightness) }] };
+    track.applyConstraints(constraints).then(updateCameraSettings);
+}
 
 //設定に付けているイベントを削除する
 function removeApplyCameraEvent() {
-    console.log('イベントリスナ削除');
+//    console.log('イベントリスナ削除');
     sceneModeSelect.removeEventListener('onchange',applySceneMode);
     focusModeSelect.removeEventListener('onchange',applyFocusMode);
     exposureModeSelect.removeEventListener('onchange',applyExposureMode);
@@ -104,6 +114,7 @@ function removeApplyCameraEvent() {
     colorTemperatureSlider.removeEventListener('oninput',applyColorTemperature);
     exposureCompensationSlider.removeEventListener('oninput',applyExposureCompensation);
     isoSlider.removeEventListener('oninput',applyIso);
+    brightnessSlider.removeEventListener('oninput',applyBrightness);
 //    if (!(typeof updateCameraStatusTimer === 'undefined')) {
 //        clearInterval(updateCameraStatusTimer);
 //    }
@@ -143,6 +154,9 @@ function addApplyCameraSettings() {
     }
     if ('iso' in capabilities) {
         isoSlider.oninput=applyIso;
+    }
+    if ('brightness' in capabilities) {
+        isoSlider.oninput=applyBrightness;
     }
 //    updateCameraStatusTimer = setInterval(function(){updateCameraSettings()},1000);
 }
@@ -233,6 +247,17 @@ function getCameraSettings() {
         isoSliderValue.textContent = settings.iso;
         isoSlider.hidden = false;
     }
+    if (!('brightness' in capabilities)) {
+        brightnessSlider.hidden = true;
+        brightnessSliderValue.textContent='使えません';
+    } else {
+        brightnessSlider.min = capabilities.brightness.min;
+        brightnessSlider.max = capabilities.brightness.max;
+        brightnessSlider.step = (capabilities.brightness.step==0) ? 1 : capabilities.brightness.step;
+        brightnessSlider.value = settings.brightness;
+        brightnessSliderValue.textContent = settings.brightness;
+        brightnessSlider.hidden = false;
+    }
 }
 
 function updateCameraSettings() {
@@ -268,5 +293,8 @@ function updateCameraSettings() {
     }
     if ('iso' in capabilities) {
         isoSliderValue.textContent = isoSlider.value +'->'+ constraints.iso +'->'+ settings.iso;
+    }
+    if ('brightness' in capabilities) {
+        brightnessSliderValue.textContent = brightnessSlider.value +'->'+ constraints.brightness +'->'+ settings.brightness;
     }
 }

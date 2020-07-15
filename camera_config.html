@@ -94,11 +94,11 @@
 
             <div>
                 <label for="whiteBalanceMode">whiteBalanceMode: </label><select id="whiteBalanceMode">
-<!--                    <option value='auto'>オート</option>
-                    <option value='manual'>マニュアル</option>
-                    <option value='fixed'>固定</option>
-                    <option value='none'>なし</option>
--->                    <option value='continuous' selected>コンティニュアス</option>
+                    <option value='incandescent'>白熱灯</option>
+                    <option value='fluorescent' selected>蛍光灯</option>
+                    <option value='daylight'>晴れ</option>
+                    <option value='twilight'>夕方</option>
+                    <option value='continuous'>コンティニュアス</option>
                 </select>
                 <span id="whiteBalanceModeValue">不明</span>
             </div>
@@ -138,6 +138,12 @@
                 </div>
             </div>
 
+            <div>
+                <div>
+                    <label for="brightness">brightness: </label><input type="range" id="brightness"></select>
+                    <span id="brightnessValue">不明</span>
+                </div>
+            </div>
 
 
         </div>
