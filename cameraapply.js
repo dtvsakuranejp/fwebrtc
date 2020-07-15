@@ -13,9 +13,9 @@ function applyExposureTime() {
     const exposureTime = exposureTimeSlider.value;
 
     let constraints = track.getConstraints();
-    console.log('constraints');
-    console.log('constraints.advanced');
-    console.log('constraints.exposurTime');
+    console.log(constraints);
+    console.log(constraints.advanced);
+    console.log(constraints.exposurTime);
     
     constraints.exposureTime = exposureTime;
     track.applyConstraints(constraints);
