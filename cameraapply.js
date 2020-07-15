@@ -12,10 +12,17 @@ function applyExposureTime() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const exposureTime = exposureTimeSlider.value;
 
+    const settings = track.getSettings();
+    console.log(settings);
+
     let constraints = { exposureTime: Number(exposureTime) };
     console.log(constraints);
     console.log(constraints.exposureTime);
     track.applyConstraints(constraints);
+
+    const settings = track.getSettings();
+    console.log(settings);
+
 }
 
 //設定に付けているイベントを削除する
