@@ -30,6 +30,7 @@ function applyCameraSettings() {
     getCameraSettings();
 
     //イベントリスナ追加
+    const track = localStream.getVideoTracks()[0];//localstreamが未定義だと失敗する
     const capabilities = track.getCapabilities();
     if ('exposureTime' in capabilities) {
         console.log('イベントリスナ設置');
