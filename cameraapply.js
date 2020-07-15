@@ -11,9 +11,9 @@ function applyExposureCompensation() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const exposureCompensation = exposureCompensationSlider.value;
 
-    let constraints = { exposureCompensation: {ideal: Number(exposureCompensation) } };
+    let constraints = { exposureCompensation: {ideal: Number(exposureCompensation) },
+                        advanced: [ { exposureCompensation: Number(exposureCompensation) }] };
     track.applyConstraints(constraints);
-    console.log(constraints);
 }
 
 //シーンモードを反映
@@ -21,7 +21,8 @@ function applySceneMode() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const sceneMode = sceneModeSelect.value;
 
-    let constraints = { sceneMode: {ideal: sceneMode } };
+    let constraints = { sceneMode: {ideal: sceneMode },
+                        advanced: [ { sceneMode: sceneMode }] };
     track.applyConstraints(constraints);
 }
 
@@ -30,7 +31,8 @@ function applyFocusMode() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const focusMode = focusModeSelect.value;
 
-    let constraints = { focusMode: {ideal: focusMode } };
+    let constraints = { focusMode: {ideal: focusMode },
+                        advanced: [ { focusMode: focusMode }] };
     track.applyConstraints(constraints);
 }
 
