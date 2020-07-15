@@ -41,11 +41,11 @@ function applyCameraSettings() {
 //streamの現在をカメラ設定に反映する
 function getCameraSettings() {
     const track = localStream.getVideoTracks()[0];//localstreamが未定義だと失敗する
-//    console.log(track);
+    console.log(track);
     const capabilities = track.getCapabilities();
     const settings = track.getSettings();
-//    console.log(capabilities);
-//    console.log(settings);
+    console.log(capabilities);
+    console.log(settings);
   
     //明るさが有効かどうか判定
     if (!('exposureTime' in capabilities)) {
