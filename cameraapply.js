@@ -238,7 +238,7 @@ function getCameraSettings() {
 function updateCameraSettings() {
     const track = localStream.getVideoTracks()[0];//localstreamが未定義だと失敗する
     const capabilities = track.getCapabilities();
-    const constraints = track.getCosntraints();
+    const constraints = track.getConstraints();
     const settings = track.getSettings();
   console.log(settings);
     //明るさが有効かどうか判定
