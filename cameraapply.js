@@ -35,17 +35,17 @@ function applyCameraSettings() {
     if ('exposureTime' in capabilities) {
         console.log('イベントリスナ設置');
         exposureTimeSlider.addEventListener('onchange',applyExposureTime(track, exposureTimeSlider.value));
-        updateCameraStatusTimer = setInterval(getCameraSettings(track),1000);
+        updateCameraStatusTimer = setInterval(function(){getCameraSettings(track)},1000);
     }
 }
 
 //streamの現在をカメラ設定に反映する
 function getCameraSettings(track) {
-    console.log(track);
+//    console.log(track);
     const capabilities = track.getCapabilities();
     const settings = track.getSettings();
-    console.log(capabilities);
-    console.log(settings);
+//    console.log(capabilities);
+//    console.log(settings);
   
     //明るさが有効かどうか判定
     if (!('exposureTime' in capabilities)) {
