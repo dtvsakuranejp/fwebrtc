@@ -8,6 +8,8 @@ let updateCameraStatusTimer;
 
 //明るさを反映
 function applyExposureTime(track, value) {
+    console.log(track);
+    console.log(value);
     track.applyConstraints({advanced: [ {exposureTime: value} ]});
 }
 
