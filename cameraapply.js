@@ -12,11 +12,13 @@ function applyExposureTime(track, value) {
     console.log(track);
     console.log(value);
     track.applyConstraints({advanced: [ {exposureTime: value} ]});
+    const settings = track.getSettings();
+    console.log(settings);
 }
 
 //設定に付けているイベントを削除する
 function removeApplyCameraEvent() {
-    exposureTimeSlider.removeEventListener('oninput',applyExposureTime);
+    exposureTimeSlider.removeEventListener('onchange',applyExposureTime);
     if (!(typeof updateCameraStatusTimer === 'undefined')) {
         clearInterval(updateCameraStatusTimer);
     }
@@ -31,7 +33,7 @@ function applyCameraSettings() {
     const capabilities = track.getCapabilities();
     if ('exposureTime' in capabilities) {
         console.log('イベントリスナ設置');
-        exposureTimeSlider.oninput = applyExposureTime(track, exposureTimeSlider.value);
+        exposureTimeSlider.addEventListener('onchange',applyExposureTime(track, exposureTimeSlider.value));
         updateCameraStatusTimer = setInterval(getCameraSettings(track),500);
     }
 }
