@@ -60,27 +60,16 @@
             <div>
                 <video id="my-video" width="352px" height="198px" controls autoplay muted playsinline></video>
             </div>
-<!--
             <div>
-                <label for="focusDistance">個別フォーカス: </label><input type="range" id="focusDistance"></select>
-                <span id="focusDistanceNumber">不明</span>
-            </div>
--->
-            <div>
-                <label for="sceneMode">一括シーン: </label><select id="sceneMode">
+                <label for="sceneMode">sceneMode: </label><select id="sceneMode">
                     <option value=’auto’ selected>オート</option>
                     <option value=’fireworks’>花火</option>
                     <span id="sceneModeValue">不明</span>
                 </select>
                 <span id="sceneModeValue">不明</span>
             </div>
-<!--
             <div>
-                <label for="whiteBalance">個別WB: </label><select id="whiteBalance"></select>
-            </div>
--->
-            <div>
-                <label for="focusMode">個別Focus: </label><select id="focusMode">
+                <label for="focusMode">FocusMode: </label><select id="focusMode">
                     <option value='auto' selected>オート</option>
                     <option value='manual'>マニュアル</option>
                     <option value='fixed'>固定</option>
@@ -91,12 +80,66 @@
                 </select>
                 <span id="focusModeValue">不明</span>
             </div>
+
+            <div>
+                <label for="exposureMode">exposureMode: </label><select id="exposureMode">
+                    <option value='auto' selected>オート</option>
+                    <option value='manual'>マニュアル</option>
+                    <option value='fixed'>固定</option>
+                    <option value='none'>なし</option>
+                    <option value='continuous'>コンティニュアス</option>
+                </select>
+                <span id="exposureModeValue">不明</span>
+            </div>
+
+            <div>
+                <label for="whiteBalanceMode">whiteBalanceMode: </label><select id="whiteBalanceMode">
+                    <option value='auto' selected>オート</option>
+                    <option value='manual'>マニュアル</option>
+                    <option value='fixed'>固定</option>
+                    <option value='none'>なし</option>
+                    <option value='continuous'>コンティニュアス</option>
+                </select>
+                <span id="whiteBalanceModeValue">不明</span>
+            </div>
+
             <div>
                 <div>
-                    <label for="exposureCompensation">露出補正: </label><input type="range" id="exposureCompensation"></select>
+                    <label for="focusDistance">focusDistance: </label><input type="range" id="focusDistance"></select>
+                    <span id="focusDistanceValue">不明</span>
+                </div>
+            </div>
+
+            <div>
+                <div>
+                    <label for="exposureTime">exposureTime: </label><input type="range" id="exposureTime"></select>
+                    <span id="exposureTimeValue">不明</span>
+                </div>
+            </div>
+
+            <div>
+                <div>
+                    <label for="colorTemperature">colorTemperature: </label><input type="range" id="colorTemperature"></select>
+                    <span id="colorTemperatureValue">不明</span>
+                </div>
+            </div>
+
+            <div>
+                <div>
+                    <label for="exposureCompensation">exposureCompensation: </label><input type="range" id="exposureCompensation"></select>
                     <span id="exposureCompensationValue">不明</span>
                 </div>
             </div>
+
+            <div>
+                <div>
+                    <label for="iso">iso: </label><input type="range" id="iso"></select>
+                    <span id="isoValue">不明</span>
+                </div>
+            </div>
+
+
+
         </div>
         <div style="display:inline-block;vertical-align: top;">
             <div id="local-camera-status" style="display:inline-block;width:240px;border-width: 1px;border-color:blue;border-style: solid;">
