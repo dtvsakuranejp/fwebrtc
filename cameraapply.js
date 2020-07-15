@@ -17,7 +17,8 @@ function applyExposureCompensation() {
     let settings = track.getSettings();
     console.log(settings);
 
-    let constraints = { exposureCompensation: Number(exposureCompensation) };
+    let constraints = { exposureCompensation: {ideal: Number(exposureCompensation) },
+                        advanced: [{exposureCompensation: Number(exposureCompensation)}] };
     console.log(constraints);
     track.applyConstraints(constraints);
 
