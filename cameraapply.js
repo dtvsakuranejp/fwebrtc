@@ -33,7 +33,8 @@ function applyCameraSettings() {
     const capabilities = track.getCapabilities();
     if ('exposureTime' in capabilities) {
         console.log('イベントリスナ設置');
-        exposureTimeSlider.addEventListener('oninput',applyExposureTime);
+//        exposureTimeSlider.addEventListener('oninput',applyExposureTime);
+        exposureTimeSlider.oninput=applyExposureTime;
         updateCameraStatusTimer = setInterval(function(){getCameraSettings()},1000);
     }
 }
