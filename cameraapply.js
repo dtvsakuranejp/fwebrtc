@@ -10,10 +10,15 @@ let updateCameraStatusTimer;
 function applyExposureTime() {
     console.log('イベント発生');
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    console.log(track);
-    track.applyConstraints({advanced: [ {exposureTime: exposureTimeSlider.value} ]});
-    const settings = track.getSettings();
-    console.log(settings);
+    const exposureTime = exposureTimeSlider.value;
+
+    let constraints = track.getConstraints();
+    console.log('constraints');
+    console.log('constraints.advanced');
+    console.log('constraints.exposurTime');
+    
+    constraints.exposureTime = exposureTime;
+    track.applyConstraints(constraints);
 }
 
 //設定に付けているイベントを削除する
