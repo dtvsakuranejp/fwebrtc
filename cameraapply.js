@@ -1,65 +1,75 @@
-//const exposureTimeSlider = document.getElementById('exposureTime');
-//const exposureTimeNumber = document.getElementById('exposureTimeNumber');
 const sceneModeSelect = document.getElementById('sceneMode');
-//const whiteBalanceSelect = document.getElementById('whiteBalance');
+const sceneModeSelectValue = document.getElementById('sceneModeValue');
 const focusModeSelect = document.getElementById('focusMode');
-//const exposureCompensationSelect = document.getElementById('exposureCompensation');
+const focusModeSelectValue = document.getElementById('focusModeValue');
 const exposureCompensationSlider = document.getElementById('exposureCompensation');
-const exposureCompensationNumber = document.getElementById('exposureCompensationNumber');
+const exposureCompensationValue = document.getElementById('exposureCompensationValue');
 let updateCameraStatusTimer;
 
 //露出補正を反映
 function applyExposureCompensation() {
-    console.log('exposureCompensationイベント発生');
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const exposureCompensation = exposureCompensationSlider.value;
 
-    let settings = track.getSettings();
-    console.log(settings);
-
-    let constraints = { exposureCompensation: {ideal: Number(exposureCompensation) },
-                        advanced: [{exposureCompensation: Number(exposureCompensation)}] };
-    console.log(constraints);
+    let constraints = { exposureCompensation: {ideal: Number(exposureCompensation) } };
     track.applyConstraints(constraints);
-
-    settings = track.getSettings();
-    console.log(settings);
-
 }
+
+//シーンモードを反映
+function applySceneMode() {
+    const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
+    const sceneMode = sceneModeSelect.value;
+
+    let constraints = { sceneMode: {ideal: Number(sceneMode) } };
+    track.applyConstraints(constraints);
+}
+
+//フォーカスモードを反映
+function applyFocusMode() {
+    const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
+    const focusMode = focusModeSelect.value;
+
+    let constraints = { focusMode: {ideal: Number(focusMode) } };
+    track.applyConstraints(constraints);
+}
+
 
 //設定に付けているイベントを削除する
 function removeApplyCameraEvent() {
     console.log('イベントリスナ削除');
     exposureCompensationSlider.removeEventListener('oninput',applyExposureCompensation);
+    focusModeSelect.removeEventListener('onchange',applyFocusMode);
+    sceneModeSelect.removeEventListener('onchange',applySceneMode);
     if (!(typeof updateCameraStatusTimer === 'undefined')) {
         clearInterval(updateCameraStatusTimer);
     }
 }
 
 //streamに対してカメラ設定できるようにする
-function applyCameraSettings() {
+function addApplyCameraSettings() {
     getCameraSettings();
 
     //イベントリスナ追加
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const capabilities = track.getCapabilities();
     if ('exposureCompensation' in capabilities) {
-        console.log('イベントリスナ設置');
         exposureCompensationSlider.oninput=applyExposureCompensation;
-        updateCameraStatusTimer = setInterval(function(){getCameraSettings()},1000);
     }
+    if ('focusMode' in capabilities) {
+        focusModeSelect.onchange=applyFocusMode;
+    }
+    if ('sceneMode' in capabilities) {
+        sceneModeSelect.onchange=applySceneMode;
+    }
+    updateCameraStatusTimer = setInterval(function(){updateCameraSettings()},1000);
 }
 
 //streamの現在をカメラ設定に反映する
 function getCameraSettings() {
     const track = localStream.getVideoTracks()[0];//localstreamが未定義だと失敗する
-//    console.log(track);
     const capabilities = track.getCapabilities();
     const settings = track.getSettings();
-//    console.log(capabilities);
-//    console.log(settings);
   
-    //明るさが有効かどうか判定
     if (!('exposureCompensation' in capabilities)) {
         exposureCompensationSlider.hidden = true;
         exposureCompensationNumber.textContent='使えません';
@@ -68,7 +78,36 @@ function getCameraSettings() {
         exposureCompensationSlider.max = capabilities.exposureCompensation.max;
         exposureCompensationSlider.step = (capabilities.exposureCompensation.step==0) ? 1 : capabilities.exposureCompensation.step;
         exposureCompensationSlider.value = settings.exposureCompensation;
-        exposureCompensationNumber.textContent = '使えます'+settings.exposureCompensation;
+        exposureCompensationValue.textContent = settings.exposureCompensation;
         exposureCompensationSlider.hidden = false;
+    }
+    if (!('focusMode' in capabilities)) {
+        focusModeSelect.hidden=true;
+        focusModeSelectValue.textContent='使えません';
+    else {
+        focusModeSelectValue.textContent=settings.focusMode;
+    }
+    if (!('sceneMode' in capabilities)) {
+        sceneModeSelect.hidden=true;
+        sceneModeSelectValue.textContent='使えません';
+    else {
+        sceneModeSelectValue.textContent=settings.sceneMode;
+    }
+}
+
+function updateCameraSettings() {
+    const track = localStream.getVideoTracks()[0];//localstreamが未定義だと失敗する
+    const capabilities = track.getCapabilities();
+    const settings = track.getSettings();
+  
+    //明るさが有効かどうか判定
+    if ('exposureCompensation' in capabilities) {
+        exposureCompensationNumber.textContent = settings.exposureCompensation;
+    }
+    if ('focusMode' in capabilities) {
+        exposureCompensationNumber.textContent = settings.focusMode;
+    }
+    if ('sceneMode' in capabilities) {
+        exposureCompensationNumber.textContent = settings.sceneMode;
     }
 }

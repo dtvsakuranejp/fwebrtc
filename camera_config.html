@@ -70,6 +70,7 @@
                 <label for="sceneMode">一括シーン: </label><select id="sceneMode">
                     <option value=’auto’ selected>オート</option>
                     <option value=’fireworks’>花火</option>
+                    <span id="sceneModeValue">不明</span>
                 </select>
             </div>
 <!--
@@ -80,14 +81,19 @@
             <div>
                 <label for="focusMode">個別Focus: </label><select id="focusMode">
                     <option value='auto' selected>オート</option>
+                    <option value='manual'>マニュアル</option>
+                    <option value='fixed'>固定</option>
+                    <option value='none'>なし</option>
+                    <option value='continuous'>コンティニュアス</option>
                     <option value='edof'>無難に固定</option>
                     <option value='infinity'>無限遠に固定</option>
                 </select>
+                <span id="focusModeValue">不明</span>
             </div>
             <div>
                 <div>
                     <label for="exposureCompensation">露出補正: </label><input type="range" id="exposureCompensation"></select>
-                    <span id="exposureCompensationNumber">不明</span>
+                    <span id="exposureCompensationValue">不明</span>
                 </div>
             </div>
         </div>

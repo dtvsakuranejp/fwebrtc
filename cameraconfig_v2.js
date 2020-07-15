@@ -99,7 +99,7 @@ function setCameraConfig() {
     .then(gotDevices)
     .then(function(){
       localStream=stream;
-      setTimeout(function(){applyCameraSettings()},1000);//localstreamが取得できてしばらくしたらカメラ設定を反映
+      setTimeout(function(){addApplyCameraSettings()},1000);//localstreamが取得できてしばらくしたらカメラ設定を反映
     })
     .catch(handleError);
 }
