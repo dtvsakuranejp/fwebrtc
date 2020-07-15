@@ -27,20 +27,20 @@ function removeApplyCameraEvent() {
 
 //streamに対してカメラ設定できるようにする
 function applyCameraSettings() {
-    const track = localStream.getVideoTracks()[0];//localstreamが未定義だと失敗する
-    getCameraSettings(track);
+    getCameraSettings();
 
     //イベントリスナ追加
     const capabilities = track.getCapabilities();
     if ('exposureTime' in capabilities) {
         console.log('イベントリスナ設置');
         exposureTimeSlider.addEventListener('onchange',applyExposureTime(track, exposureTimeSlider.value));
-        updateCameraStatusTimer = setInterval(function(){getCameraSettings(track)},1000);
+        updateCameraStatusTimer = setInterval(function(){getCameraSettings()},1000);
     }
 }
 
 //streamの現在をカメラ設定に反映する
-function getCameraSettings(track) {
+function getCameraSettings() {
+    const track = localStream.getVideoTracks()[0];//localstreamが未定義だと失敗する
 //    console.log(track);
     const capabilities = track.getCapabilities();
     const settings = track.getSettings();
