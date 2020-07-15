@@ -13,6 +13,7 @@ function applyExposureCompensation() {
 
     let constraints = { exposureCompensation: {ideal: Number(exposureCompensation) } };
     track.applyConstraints(constraints);
+    console.log(constraints);
 }
 
 //シーンモードを反映
@@ -20,7 +21,7 @@ function applySceneMode() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const sceneMode = sceneModeSelect.value;
 
-    let constraints = { sceneMode: {ideal: Number(sceneMode) } };
+    let constraints = { sceneMode: {ideal: sceneMode } };
     track.applyConstraints(constraints);
 }
 
@@ -29,7 +30,7 @@ function applyFocusMode() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const focusMode = focusModeSelect.value;
 
-    let constraints = { focusMode: {ideal: Number(focusMode) } };
+    let constraints = { focusMode: {ideal: focusMode } };
     track.applyConstraints(constraints);
 }
 
