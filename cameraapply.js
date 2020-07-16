@@ -50,12 +50,12 @@ function applyAutoWhiteBalance() {
     let constraints = { advanced: [ { whiteBalanceMode: whiteBalanceMode }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
-//色温度を反映、参考資料によりmanualを追加
+//色温度を反映
 function applyColorTemperature() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const colorTemperature = colorTemperatureSlider.value;
     manualWhiteBalance=true;
-    let constraints = { advanced: [ { whiteBalanceMode: "manual", colorTemperature: Number(colorTemperature) }] };
+    let constraints = { advanced: [ { colorTemperature: Number(colorTemperature) }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 
@@ -85,10 +85,11 @@ function addApplyCameraSettings() {
         focusDistanceSlider.oninput=applyFocusDistance;
     }
     if ('exposureCompensation' in capabilities) {
+        resetExposureButton.onclick=applyNomalExposure;
         exposureCompensationSlider.oninput=applyExposureCompensation;
     }
     if ('whiteBalanceMode' in capabilities) {
-        autoWhiteBalanceButton.onchange=applyAutoWhiteBalance;
+        autoWhiteBalanceButton.onclick=applyAutoWhiteBalance;
     }
     if ('colorTemperature' in capabilities) {
         colorTemperatureSlider.oninput=applyColorTemperature;
