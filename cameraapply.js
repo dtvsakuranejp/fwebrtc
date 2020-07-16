@@ -32,7 +32,7 @@ function applyFocusDistance() {
 //露出補正をリセットする
 function applyNomalExposure() {
     exposureCompensationSlider.value=0;
-//    applyExposureTime();
+    applyExposureCompensation();
 }
 //露出補正を反映
 function applyExposureCompensation() {
@@ -42,7 +42,7 @@ function applyExposureCompensation() {
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 
-//ホワイトバランスをオートにする（たぶん）
+//ホワイトバランスをオートにする（ならない）
 function applyAutoWhiteBalance() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const whiteBalanceMode = "continuous";
