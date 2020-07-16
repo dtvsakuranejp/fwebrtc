@@ -1,4 +1,4 @@
-const autoFocusButton = document.getElementById('autoFocus');
+const autoFocusButton = document.getElementById('autoFocusMode');
 const focusDistanceSlider = document.getElementById('focusDistance');
 const focusDistanceValue = document.getElementById('focusDistanceValue');
 let manualFocus=false;
