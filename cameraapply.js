@@ -116,11 +116,11 @@ function getCameraSettings() {
         focusDistanceSlider.value = settings.focusDistance;
         focusDistanceSlider.hidden = false;
         focusDistanceValue.textContent = manualFocus ?
-                ("0000"
+                ("000"
                     +Math.round(
                                 (focusDistanceSlider.value - focusDistanceSlider.min)
                                 /(focusDistanceSlider.max - focusDistanceSlider.min)*1000)
-                ).slice(-4)
+                ).slice(-3)
             : "AUTO";
     }
 
@@ -169,17 +169,17 @@ function updateCameraSettings() {
 
     if ('focusDistance' in capabilities) {
         focusDistanceValue.textContent = manualFocus ?
-                ("0000"
+                ("000"
                     +Math.round(
                                 (focusDistanceSlider.value - focusDistanceSlider.min)
                                 /(focusDistanceSlider.max - focusDistanceSlider.min)*1000)
-                ).slice(-4)
+                ).slice(-3)
             : "AUTO";
     }
     if ('exposureCompensation' in capabilities) {
         exposureCompensationValue.textContent =
             ("+"
-                +exposureCompensationSlider.value.toFixed(1)
+                +Number(exposureCompensationSlider.value).toFixed(1)
             ).slice(-4);
     }
     if ('colorTemperature' in capabilities) {
