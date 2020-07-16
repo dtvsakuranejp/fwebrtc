@@ -10,6 +10,10 @@
         margin:0px;
         padding:0px;
     }
+    button {
+        margin:0.5em;
+        padding:0em 1em;
+    }
     </style>
 
 </head>
@@ -17,9 +21,9 @@
     <!--通信に必要な情報-->
     <div>
         自分のID: <span id="my-id" style="padding: 1em 0em 1em 0em;">未取得</span>
+    </div>
     <div>
-    <div>
-        相手のID: <input type="text" placeholder="reciever-id" id="reciever-id">
+        相手のID: <input type="text" placeholder="相手のIDを入力" id="reciever-id">
     </div>
     <!--ビデオのコントロール-->
     <div><p><b>マイクとカメラの選択</b></p>
@@ -37,120 +41,73 @@
         <div class="select">
             <label for="fps">フレームレート: </label><select id="fps"></select>
         </div>
-    </div>
-
-    <!--カメラ操作とメッセージ-->
-    <div><p><b>送受信</b></p>
         <div class="select">
             <label for="codec">動画形式: </label><select id="codec"></select>
         </div>
-<!--
-        <div class="select">
-            <label for="bandwidth">通信規制: </label><select id="bandwidth"></select>
-        </div>
--->
-    <button id="start-video" style="margin: 0.5em;">映像 START</button>
-        <button id="stop-video" style="margin: 0.5em;">映像 STOP</button>
-        <input type="text" id="message-to-reciever" style="margin: 0.5em;">
-        <button id="send-to-reciever" style="margin: 0.5em;">テキスト送信</button>
     </div>
 
+    <!--映像とメッセージの送信-->
+    <div><p><b>送受信</b></p>
+        <button id="start-video">送信 START</button>
+        <button id="stop-video">送信 STOP</button>
+        <input type="text" id="message-to-reciever" style="margin: 0.5em;">
+        <button id="send-to-reciever">テキスト送信</button>
+    </div>
+
+    <!--プレビューと画質コントロール-->
     <div>
-        <div style="display:inline-block;border-width: 1px;border-color:red;border-style: solid;width:352px;height:198px;">
+        <div style="display:inline-block;border-width: 1px;border-color:red;border-style: solid;width:480px;height:270px;">
             <div>
-                <video id="my-video" width="352px" height="198px" controls autoplay muted playsinline></video>
-            </div>
-            <div>
-                <label for="sceneMode">sceneMode: </label><select id="sceneMode">
-                    <option value=’auto’ selected>オート</option>
-                    <option value=’fireworks’>花火</option>
-                    <span id="sceneModeValue">不明</span>
-                </select>
-                <span id="sceneModeValue">不明</span>
-            </div>
-            <div>
-                <label for="focusMode">フォーカス: </label><select id="focusMode">
-                    <option value='manual'>マニュアル</option>
-                    <option value='continuous' selected>自動</option>
-                </select>
-                <span id="focusModeValue">不明</span>
+                <video id="my-video" width="480px" height="270px" controls autoplay muted playsinline></video>
             </div>
 
-            <div>
-                <label for="exposureMode">露出: </label><select id="exposureMode">
-                    <option value='manual'>マニュアル</option>
-                    <option value='continuous' selected>自動</option>
-                </select>
-                <span id="exposureModeValue">不明</span>
-            </div>
-
-            <div>
-                <label for="whiteBalanceMode">ホワイトバランス: </label><select id="whiteBalanceMode">
-                    <option value='manual'>マニュアル</option>
-                    <option value='continuous' selected>自動</option>
-                </select>
-                <span id="whiteBalanceModeValue">不明</span>
-            </div>
-
-            <div>
+            <!--フォーカス-->
+            <div style="margin: 0.2m;border:solid gray 1px;">
                 <div>
-                    <label for="focusDistance">ピント位置: </label><input type="range" id="focusDistance"></select>
+                    <span style="margin:0.5em;width:10em;">フォーカス： </span>
                     <span id="focusDistanceValue">不明</span>
+                    <button id="autoFocus">AUTO</button>
+                </div>
+                <div style="text-align:center;">
+                    <input type="range" id="focusDistance" style="width:400px;"></select>
                 </div>
             </div>
 
-            <div>
+            <!--露出-->
+            <div style="margin: 0.2m;border:solid gray 1px;">
                 <div>
-                    <label for="exposureTime">露出時間: </label><input type="range" id="exposureTime"></select>
-                    <span id="exposureTimeValue">不明</span>
-                </div>
-            </div>
-
-            <div>
-                <div>
-                    <label for="colorTemperature">色温度: </label><input type="range" id="colorTemperature"></select>
-                    <span id="colorTemperatureValue">不明</span>
-                </div>
-            </div>
-
-            <div>
-                <div>
-                    <label for="exposureCompensation">露出補正: </label><input type="range" id="exposureCompensation"></select>
+                    <span style="margin:0.5em;">露出補正： </span>
                     <span id="exposureCompensationValue">不明</span>
+                    <button id="resetExposure">RESET</button>
+                </div>
+                <div style="text-align:center;">
+                    <input type="range" id="exposureCompensation" style="width:400px;"></select>
                 </div>
             </div>
 
-            <div>
+            <!--ホワイトバランス-->
+            <div style="margin: 0.2m;border:solid gray 1px;">
                 <div>
-                    <label for="iso">ISO感度: </label><input type="range" id="iso"></select>
-                    <span id="isoValue">不明</span>
+                    <span style="margin:0.5em;">ホワイトバランス： </span>
+                    <span id="colorTemperatureValue">不明</span>
+                    <button id="autoWhiteBalance">AUTO</button>
+                </div>
+                <div style="text-align:center;">
+                    <input type="range" id="colorTemperature" style="width:400px;"></select>
                 </div>
             </div>
-
-            <div>
-                <div>
-                    <label for="brightness">明るさ: </label><input type="range" id="brightness"></select>
-                    <span id="brightnessValue">不明</span>
-                </div>
-            </div>
-
-
         </div>
+
+        <!--通信欄-->
         <div style="display:inline-block;vertical-align: top;">
-            <div id="local-camera-status" style="display:inline-block;width:240px;border-width: 1px;border-color:blue;border-style: solid;">
-                ○
+            <div id="local-camera-status" style="display:inline-block;width:200px;border-width: 1px;border-color:blue;border-style: solid;">
+                現在のステータス
             </div>
-            <!--
-            <div id="remote-monitor-status" style="display:inline-block;width:120px;border-width: 1px;border-color:blue;border-style: solid;">
-                ○
-            </div>
-            -->
-            <div id="messages" style="width:240px;height:320px;border-width: 1px;border-color:blue;border-style: solid;">
+            <div id="messages" style="width:200px;height:320px;border-width: 1px;border-color:blue;border-style: solid;">
                 （ 通 信 欄 ）
             </div>
         </div>
     </div>
-
     
     <script src="./cameraselect.js" async></script>
     <script src="./cameraconfig_v2.js" async></script>
@@ -311,9 +268,6 @@
             resolutionSelect.onchange = start;
             fpsSelect.onchange = start;
             codecSelect.onchange = start;
-//            exposureCompensation.onchange = start;
-//            whiteBalanceSelect.onchange = start;
-//            focusModeSelect.onchange = start;
             start();
         }
 
