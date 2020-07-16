@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ウィンドウオープナー</title>
+</head>
+<body>
+    <!--基本情報-->
+    <div>
+        このウィンドウの左上: ( <span id="myLeft">未取得</span>,
+                              <span id="myTop">未取得</span> )
+    </div>
+    <div>
+        このウィンドウの大きさ: ( <span id="myWidth">未取得</span>,
+                                <span id="myHeight">未取得</span> )
+    </div>
+    <div>
+        モニター全体の大きさ: ( <span id="screenWidth">未取得</span>,
+                              <span id="screenHeight">未取得</span> )
+    </div>
+    <div>
+        ↓
+    </div>
+    <div>
+        1カメ受信ウィンドウの左上: ( <span id="cam1Left">未取得</span>,
+                                   <span id="cam1Top">未取得</span> )
+    </div>
+    <div>
+        1カメ受信ウィンドウの大きさ: ( <span id="cam1Width">未取得</span>,
+                                   <span id="cam1Height">未取得</span> )
+    </div>
+    <div>
+        1カメ受信ウィンドウのタイトルとURL: ( <span id="cam1Title">_blank</span>,
+                                   <span id="cam1URL">./recieve01.html</span> )
+    </div>
+    <div>
+        <button style="padding: 1em;" id="cam1OpenButton">1カメ開く</button>
+    </div>
+
+    <div>
+        2カメ受信ウィンドウの左上: ( <span id="cam2Left">未取得</span>,
+                                   <span id="cam2Top">未取得</span> )
+    </div>
+    <div>
+        2カメ受信ウィンドウの大きさ: ( <span id="cam2Width">未取得</span>,
+                                   <span id="cam2Height">未取得</span> )
+    </div>
+    <div>
+        2カメ受信ウィンドウのタイトルとURL: ( <span id="cam2Title">_blank</span>,
+                                   <span id="cam2URL">./recieve02.html</span> )
+    </div>
+    <div>
+        <button style="padding: 1em;" id="cam2OpenButton">2カメ開く</button>
+    </div>
+
+    <div>
+        3カメ受信ウィンドウの左上: ( <span id="cam3Left">未取得</span>,
+                                   <span id="cam3Top">未取得</span> )
+    </div>
+    <div>
+        3カメ受信ウィンドウの大きさ: ( <span id="cam3Width">未取得</span>,
+                                   <span id="cam3Height">未取得</span> )
+    </div>
+    <div>
+        3カメ受信ウィンドウのタイトルとURL: ( <span id="cam3Title">_blank</span>,
+                                   <span id="cam3URL">./recieve03.html</span> )
+    </div>
+    <div>
+        <button style="padding: 1em;" id="cam3OpenButton">3カメ開く</button>
+    </div>
+
+    <script>
+        const myLeft = document.getElementById('myLeft');
+        const myTop = document.getElementById('myTop');
+        const myWidth = document.getElementById('myWidth');
+        const myHeight = document.getElementById('myHeight');
+        const screenWidth = document.getElementById('screenWidth');
+        const screenHeight = document.getElementById('screenHeight');
+        const cam1Left = document.getElementById('cam1Left');
+        const cam1Top = document.getElementById('cam1Top');
+        const cam1Width = document.getElementById('cam1Width');
+        const cam1Height = document.getElementById('cam1Height');
+        const cam2Left = document.getElementById('cam2Left');
+        const cam2Top = document.getElementById('cam2Top');
+        const cam2Width = document.getElementById('cam2Width');
+        const cam2Height = document.getElementById('cam2Height');
+        const cam3Left = document.getElementById('cam3Left');
+        const cam3Top = document.getElementById('cam3Top');
+        const cam3Width = document.getElementById('cam3Width');
+        const cam3Height = document.getElementById('cam3Height');
+
+        const cam1Title=document.getElementById('cam1Title');
+        const cam1URL=document.getElementById('cam1URL');
+        const cam2Title=document.getElementById('cam2Title');
+        const cam2URL=document.getElementById('cam2URL');
+        const cam3Title=document.getElementById('cam3Title');
+        const cam3URL=document.getElementById('cam3URL');
+
+        window.onload=function() {
+            getMyWindowInfo();
+            calcRecieveWindowPosition();
+        }
+        window.onresize=function() {
+            getMyWindowInfo();
+        }
+//        window.ondrag=function() {
+//            getMyWindowInfo();
+//        }
+
+        document.getElementById('cam1OpenButton').onclick=function() {
+            window.open(cam1URL.textContent,
+                        cam1Title.textContent,
+                         'top=' + cam1Top.textContent +','
+                         +'left=' + cam1Left.textContent +','
+                         +'width=' + cam1Width.textContent +','
+                         +'height=' + cam1Height.textContent +','
+                        );
+        }
+        document.getElementById('cam2OpenButton').onclick=function() {
+            window.open(cam2URL.textContent,
+                        cam2Title.textContent,
+                         'top=' + cam2Top.textContent +','
+                         +'left=' + cam2Left.textContent +','
+                         +'width=' + cam2Width.textContent +','
+                         +'height=' + cam2Height.textContent +','
+                        );
+        }
+        document.getElementById('cam3OpenButton').onclick=function() {
+            window.open(cam3URL.textContent,
+                        cam3Title.textContent,
+                         'top=' + cam3Top.textContent +','
+                         +'left=' + cam3Left.textContent +','
+                         +'width=' + cam3Width.textContent +','
+                         +'height=' + cam3Height.textContent +','
+                        );
+        }
+
+        //現在の自分の情報を更新
+        function getMyWindowInfo() {
+            myLeft.textContent=window.screenX;
+            myTop.textContent=window.screenY;
+            myWidth.textContent=document.documentElement.clientWidth;
+            myHeight.textContent=document.documentElement.clientHeight;
+            screenWidth.textContent=screen.width;
+            screenHeight.textContent=screen.height;
+        }
+
+        //子画面を出す位置を検討
+        function calcRecieveWindowPosition(screenWidth, screenHeight) {
+            const windowOffsetX=screen.width/16;
+            const windowOffsetY=screen.height/8;
+            cam1Left.textContent=screen.width/2+windowOffsetX*1;
+            cam1Top.textContent=screen.height/2+windowOffsetY*1;
+            cam2Left.textContent=screen.width/2+windowOffsetX*2;
+            cam2Top.textContent=screen.height/2+windowOffsetY*2;
+            cam3Left.textContent=screen.width/2+windowOffsetX*3;
+            cam3Top.textContent=screen.height/2+windowOffsetY*3;
+
+            const recieveWindowsWidth=2600;
+            const recieveWindowsHeight=1280;
+            cam1Width.textContent=recieveWindowsWidth;
+            cam1Height.textContent=recieveWindowsHeight;
+            cam2Width.textContent=recieveWindowsWidth;
+            cam2Height.textContent=recieveWindowsHeight;
+            cam3Width.textContent=recieveWindowsWidth;
+            cam3Height.textContent=recieveWindowsHeight;
+        }
+    </script>
+</body>
+</html>
