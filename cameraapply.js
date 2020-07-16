@@ -137,7 +137,7 @@ function getCameraSettings() {
         exposureCompensationSlider.hidden = false;
         exposureCompensationValue.textContent =
             ("+"
-                +exposureCompensationSlider.value.toFixed(1)
+                +Number(exposureCompensationSlider.value).toFixed(1)
             ).slice(-4);
     }
 
