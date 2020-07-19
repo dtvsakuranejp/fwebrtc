@@ -15,11 +15,11 @@ function setOptions() {
         ['resolution', '1080', '1080p',true],
         ['resolution', '720', '720p',false],
         ['resolution', '480', '480p',false],
-        ['fps', '10', '10fps',false],
-        ['fps', '15', '15fps',true],
+        ['fps', '10', '10fps',true],
+        ['fps', '15', '15fps',false],
         ['fps', '30', '30fps',false],
-        ['codec', 'H264', 'H.264',false],
-        ['codec', 'VP9', 'VP9(safari不可)',true],
+        ['codec', 'H264', 'H.264',true],
+        ['codec', 'VP9', 'VP9(safari不可)',false],
     ];
     const values = configSelectors.map(select => select.value);
     configSelectors.forEach(select => {
