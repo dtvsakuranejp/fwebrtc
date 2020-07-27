@@ -88,7 +88,7 @@ function applyIso() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const iso = isoSlider.value;
     manualIso=true;
-    let constraints = { advanced: [ { iso: Number(iso) }] };
+    let constraints = { advanced: [ { exposureMode: "manual", iso: Number(iso) }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 
