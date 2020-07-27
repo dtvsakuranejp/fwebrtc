@@ -96,14 +96,61 @@
                     <input type="range" id="colorTemperature" style="width:400px;"></select>
                 </div>
             </div>
+
+
+            <!--ISO-->
+            <div style="margin: 0.2m;border:solid gray 1px;">
+                <div>
+                    <span style="margin:0.5em;">ISO感度： </span>
+                    <span id="isoValue">不明</span>
+                    <button id="autoIso">AUTO</button>
+                </div>
+                <div style="text-align:center;">
+                    <input type="range" id="iso" style="width:400px;"></select>
+                </div>
+            </div>
+
+
+            <!--コントラスト-->
+            <div style="margin: 0.2m;border:solid gray 1px;">
+                <div>
+                    <span style="margin:0.5em;">コントラスト： </span>
+                    <span id="contrastValue">不明</span>
+                    <button id="autoContrast">AUTO</button>
+                </div>
+                <div style="text-align:center;">
+                    <input type="range" id="contrast" style="width:400px;"></select>
+                </div>
+            </div>
+
+            <!--彩度-->
+            <div style="margin: 0.2m;border:solid gray 1px;">
+                <div>
+                    <span style="margin:0.5em;">彩やかさ： </span>
+                    <span id="saturationValue">不明</span>
+                    <button id="autoSaturation">AUTO</button>
+                </div>
+                <div style="text-align:center;">
+                    <input type="range" id="saturation" style="width:400px;"></select>
+                </div>
+            </div>
+
+
+
+
         </div>
+
+
+
+
+
 
         <!--通信欄-->
         <div style="display:inline-block;vertical-align: top;">
-            <div id="local-camera-status" style="display:inline-block;width:200px;border-width: 1px;border-color:blue;border-style: solid;">
+            <div id="local-camera-status" style="display:inline-block;width:160px;border-width: 1px;border-color:blue;border-style: solid;">
                 現在のステータス
             </div>
-            <div id="messages" style="width:200px;height:320px;border-width: 1px;border-color:blue;border-style: solid;">
+            <div id="messages" style="width:160px;height:320px;border-width: 1px;border-color:blue;border-style: solid;">
                 （ 通 信 欄 ）
             </div>
         </div>
@@ -111,7 +158,7 @@
     
     <script src="./cameraselect.js" async></script>
     <script src="./cameraconfig_v2.js" async></script>
-    <script src="./cameraapply.js" async></script>
+    <script src="./cameraapply_v2.js" async></script>
 
     <script>
         let localStream=new Object;
