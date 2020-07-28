@@ -189,16 +189,22 @@ function getCameraSettings() {
         autoFocusButton.textContent="無効";
     } else {
         autoFocusButton.textContent="AUTO";
+        console.log('focusMode: '+capabilities.focusMode.value);
     }
     if (!('focusDistance' in capabilities)) {
         focusDistanceSlider.hidden = true;
         focusDistanceValue.textContent='マニュアル操作不可';
     } else {
         focusDistanceSlider.min = capabilities.focusDistance.min;
+        console.log('focusDistance.min: '+capabilities.focusDistance.min);
         focusDistanceSlider.max = capabilities.focusDistance.max;
+        console.log('focusDistance.max: '+capabilities.focusDistance.max);
         focusDistanceSlider.step = (capabilities.focusDistance.step==0) ? 0.05 : capabilities.focusDistance.step;
+        console.log('focusDistance.step: '+capabilities.focusDistance.step);
         focusDistanceSlider.value = settings.focusDistance;
+        console.log('focusDistance.value: '+capabilities.focusDistance.value);
         focusDistanceSlider.hidden = false;
+        console.log(capabilities);
         focusDistanceValue.textContent = manualFocus ?
                 ("000"
                     +Math.round(
@@ -215,9 +221,13 @@ function getCameraSettings() {
     } else {
         resetExposureButton.textContent="RESET";
         exposureCompensationSlider.min = capabilities.exposureCompensation.min;
+        console.log('exposureCompensation.min: '+capabilities.exposureCompensation.min);
         exposureCompensationSlider.max = capabilities.exposureCompensation.max;
+        console.log('exposureCompensation.max: '+capabilities.exposureCompensation.max);
         exposureCompensationSlider.step = (capabilities.exposureCompensation.step==0) ? 0.5 : capabilities.exposureCompensation.step;
+        console.log('exposureCompensation.step: '+capabilities.exposureCompensation.step);
         exposureCompensationSlider.value = settings.exposureCompensation;
+        console.log('exposureCompensation.value: '+capabilities.exposureCompensation.value);
         exposureCompensationSlider.hidden = false;
         exposureCompensationValue.textContent =
             ("+"
@@ -229,6 +239,7 @@ function getCameraSettings() {
         autoWhiteBalanceButton.textContent="無効";
     } else {
         autoWhiteBalanceButton.textContent="AUTO";
+        console.log('whiteBalanceMode.value: '+capabilities.whiteBalanceMode.value);
     }
     if (!('colorTemperature' in capabilities)) {
         colorTemperatureSlider.hidden = true;
@@ -239,6 +250,10 @@ function getCameraSettings() {
         colorTemperatureSlider.step = (capabilities.colorTemperature.step==0) ? 50 : capabilities.colorTemperature.step;
         colorTemperatureSlider.value = settings.colorTemperature;
         colorTemperatureSlider.hidden = false;
+        console.log('colorTemperature.min: '+capabilities.colorTemperature.min);
+        console.log('colorTemperature.max: '+capabilities.colorTemperature.max);
+        console.log('colorTemperature.step: '+capabilities.colorTemperature.step);
+        console.log('colorTemperature.value: '+capabilities.colorTemperature.value);
         colorTemperatureValue.textContent = manualWhiteBalance ? 
                 (" "
                     +colorTemperatureSlider.value
@@ -250,6 +265,7 @@ function getCameraSettings() {
         autoIsoButton.textContent="無効";
     } else {
         autoIsoButton.textContent="AUTO";
+        console.log('exposureMode.value: '+capabilities.exposureMode.value);
     }
     if (!('iso' in capabilities)) {
         isoSlider.hidden = true;
@@ -260,6 +276,14 @@ function getCameraSettings() {
         isoSlider.step = (capabilities.iso.step==0) ? 10 : capabilities.iso.step;
         isoSlider.value = settings.iso;
         isoSlider.hidden = false;
+        console.log('iso.min: '+capabilities.iso.min);
+        console.log('iso.max: '+capabilities.iso.max);
+        console.log('iso.step: '+capabilities.iso.step);
+        console.log('iso.value: '+capabilities.iso.value);
+        console.log('exposureTime.min: '+capabilities.exposureTime.min);
+        console.log('exposureTime.max: '+capabilities.exposureTime.max);
+        console.log('exposureTime.step: '+capabilities.exposureTime.step);
+        console.log('exposureTime.value: '+capabilities.exposureTime.value);
         isoValue.textContent = manualIso ? 
                 (" "
                     +isoSlider.value
