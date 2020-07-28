@@ -36,15 +36,16 @@ function applyAutoFocus() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const focusMode = "continuous";
     manualFocus=false;
-    let constraints = { advanced: [ { focusMode: focusMode }] };
+    let constraints = { focusMode: { ideal: focusMode } };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 //フォーカス距離を反映、参考資料によりmanualを追加
 function applyFocusDistance() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
+    const focusMode = "manual";
     const focusDistance = focusDistanceSlider.value;
     manualFocus=true;
-    let constraints = { advanced: [ { focusMode: "manual", focusDistance: Number(focusDistance) }] };
+    let constraints = { focusMode: { ideal: focusMode }, focusDistance: { ideal: Number(focusDistance) } };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 
@@ -57,7 +58,7 @@ function applyNomalExposure() {
 function applyExposureCompensation() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const exposureCompensation = exposureCompensationSlider.value;
-    let constraints = { advanced: [ { exposureCompensation: Number(exposureCompensation) }] };
+    let constraints = { exposureCompensation: { ideal: Number(exposureCompensation) } };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 
@@ -66,33 +67,37 @@ function applyAutoWhiteBalance() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const whiteBalanceMode = "continuous";
     manualWhiteBalance=false;
-    let constraints = { advanced: [ { whiteBalanceMode: whiteBalanceMode }] };
+    let constraints = { whiteBalanceMode: { ideal: whiteBalanceMode } };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 //色温度を反映
 function applyColorTemperature() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const colorTemperature = colorTemperatureSlider.value;
+    const whiteBalanceMode = "manual";
     manualWhiteBalance=true;
-    let constraints = { advanced: [ { whiteBalanceMode: 'manual', colorTemperature: Number(colorTemperature) }] };
+    let constraints = { whiteBalanceMode: {ideal: whiteBalanceMode }, colorTemperature: {ideal: Number(colorTemperature) } };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 
 
 //ISOをオートにする（ならない？）
 function applyAutoIso() {
+
+    console.log('exposure AUTO is pushed.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const exposureMode = "continuous";
     manualExposure=false;
-    let constraints = { advanced: [ { exposureMode: exposureMode }] };
+    let constraints = { exposureMode: {ideal: exposureMode } };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 //ISO感度を反映
 function applyIso() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const iso = isoValues[isoSlider.value];
+    const exposureMode = "manual";
     manualExposure=true;
-    let constraints = { advanced: [ { exposureMode: "manual", iso: Number(iso) }] };
+    let constraints = { exposureMode: {ideal: exposureMode }, iso: {ideal: Number(iso) } };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 
@@ -104,8 +109,9 @@ function applyAutoExposureTime() {
 function applyExposureTime() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const exposureTime = exposureTimeSlider.value;
+    const exposureMode = "manual";
     manualExposure=true;
-    let constraints = { advanced: [ { exposureMode: "manual", exposureTime: Number(exposureTime) }] };
+    let constraints = { exposureMode: {ideal: exposureMode }, exposureTime: {ideal: Number(exposureTime) } };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 
