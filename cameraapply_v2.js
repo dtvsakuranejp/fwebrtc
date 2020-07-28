@@ -15,7 +15,10 @@ let manualWhiteBalance=false;
 const autoIsoButton = document.getElementById('autoIso');
 const isoSlider = document.getElementById('iso');
 const isoValue = document.getElementById('isoValue');
-let manualIso=false;
+const autoExposureTimeButton = document.getElementById('autoExposureTime');
+const exposureTimeSlider = document.getElementById('exposureTime');
+const exposureTimeValue = document.getElementById('exposureTimeValue');
+let manualExposure=false;
 
 const resetContrastButton = document.getElementById('autoContrast');
 const contrastSlider = document.getElementById('contrast');
@@ -25,6 +28,7 @@ const resetSaturationButton = document.getElementById('autoSaturation');
 const saturationSlider = document.getElementById('saturation');
 const saturationValue = document.getElementById('saturationValue');
 
+const isoValues=[32, 40, 50, 64, 80, 100, 125, 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200];//0-20
 
 
 //フォーカスをオートにする
@@ -70,7 +74,7 @@ function applyColorTemperature() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const colorTemperature = colorTemperatureSlider.value;
     manualWhiteBalance=true;
-    let constraints = { advanced: [ { colorTemperature: Number(colorTemperature) }] };
+    let constraints = { advanced: [ { whiteBalanceMode: 'manual', colorTemperature: Number(colorTemperature) }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 
@@ -79,18 +83,32 @@ function applyColorTemperature() {
 function applyAutoIso() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const exposureMode = "continuous";
-    manualIso=false;
+    manualExposure=false;
     let constraints = { advanced: [ { exposureMode: exposureMode }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
 //ISO感度を反映
 function applyIso() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    const iso = isoSlider.value;
-    manualIso=true;
+    const iso = isoValues[isoSlider.value];
+    manualExposure=true;
     let constraints = { advanced: [ { exposureMode: "manual", iso: Number(iso) }] };
     track.applyConstraints(constraints).then(updateCameraSettings);
 }
+
+//シャッタースピードをオートにする（ならない？）
+function applyAutoExposureTime() {
+    applyAutoIso();    
+}
+//シャッタースピードを反映
+function applyExposureTime() {
+    const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
+    const exposureTime = exposureTimeSlider.value;
+    manualExposure=true;
+    let constraints = { advanced: [ { exposureMode: "manual", exposureTime: Number(exposureTime) }] };
+    track.applyConstraints(constraints).then(updateCameraSettings);
+}
+
 
 //コントラストをリセットする
 function applyNomalContrast() {
@@ -133,6 +151,9 @@ function removeApplyCameraEvent() {
     autoIsoButton.removeEventListener('onclick',applyAutoIso);
     isoSlider.removeEventListener('oninput',applyIso);
 
+    autoExposureTimeButton.removeEventListener('onclick',applyAutoExposureTime);
+    exposureTimeSlider.removeEventListener('oninput',applyExposureCompensation);
+
     resetContrastButton.removeEventListener('onclick',applyNomalContrast);
     contrastSlider.removeEventListener('oninput',applyContrast);
 
@@ -165,9 +186,13 @@ function addApplyCameraSettings() {
     }
     if ('exposureMode' in capabilities) {
         autoIsoButton.oninput=applyAutoIso;
+        autoExposureTimeButton.oninput=applyAutoExposureTime;
     }
     if ('iso' in capabilities) {
         isoSlider.oninput=applyIso;
+    }
+    if ('exposureTime' in capabilities) {
+        exposureTimeSlider.oninput=applyExposureTime;
     }
     if ('contrast' in capabilities) {
         resetExposureButton.onclick=applyNomalContrast;
@@ -184,6 +209,7 @@ function getCameraSettings() {
     const track = localStream.getVideoTracks()[0];//localstreamが未定義だと失敗する
     const capabilities = track.getCapabilities();
     const settings = track.getSettings();
+    console.log(capabilities);
 
     if (!('focusMode' in capabilities)) {
         autoFocusButton.textContent="無効";
@@ -204,7 +230,6 @@ function getCameraSettings() {
         focusDistanceSlider.value = settings.focusDistance;
         console.log('focusDistance.value: '+capabilities.focusDistance.value);
         focusDistanceSlider.hidden = false;
-        console.log(capabilities);
         focusDistanceValue.textContent = manualFocus ?
                 ("000"
                     +Math.round(
@@ -263,33 +288,55 @@ function getCameraSettings() {
 
     if (!('exposureMode' in capabilities)) {
         autoIsoButton.textContent="無効";
+        autoExposureTimeButton.textContent="無効";
     } else {
         autoIsoButton.textContent="AUTO";
+        autoExposureTimeButton.textContent="AUTO";
         console.log('exposureMode.value: '+capabilities.exposureMode.value);
     }
     if (!('iso' in capabilities)) {
         isoSlider.hidden = true;
         isoValue.textContent='マニュアル操作不可';
     } else {
-        isoSlider.min = capabilities.iso.min;
-        isoSlider.max = capabilities.iso.max;
-        isoSlider.step = (capabilities.iso.step==0) ? 10 : capabilities.iso.step;
-        isoSlider.value = settings.iso;
+        //isoSlider.min = capabilities.iso.min;
+        //isoSlider.max = capabilities.iso.max;
+        //isoSlider.step = (capabilities.iso.step==0) ? 10 : capabilities.iso.step;
+        isoSlider.min = 0;
+        isoSlider.max = isoValues.length-1;
+        isoSlider.step = 1;
+        isoSlider.value = isoValues.indexOf(settings.iso);
         isoSlider.hidden = false;
         console.log('iso.min: '+capabilities.iso.min);
         console.log('iso.max: '+capabilities.iso.max);
         console.log('iso.step: '+capabilities.iso.step);
         console.log('iso.value: '+capabilities.iso.value);
+        isoValue.textContent = manualExposure ? 
+                ("   "
+                    +isoValues[isoSlider.value]
+                ).slice(-5)
+            : " AUTO";
+    }
+
+    if (!('exposureTime' in capabilities)) {
+        exposureTimeSlider.hidden = true;
+        exposureTimeValue.textContent='マニュアル操作不可';
+    } else {
+        exposureTimeSlider.min = capabilities.exposureTime.min;
+        exposureTimeSlider.max = capabilities.exposureTime.max;
+        exposureTimeSlider.step = (capabilities.exposureTime.step==0) ? 10 : capabilities.exposureTime.step;
+        exposureTimeSlider.value = settings.exposureTime;
+        exposureTimeSlider.hidden = false;
         console.log('exposureTime.min: '+capabilities.exposureTime.min);
         console.log('exposureTime.max: '+capabilities.exposureTime.max);
         console.log('exposureTime.step: '+capabilities.exposureTime.step);
         console.log('exposureTime.value: '+capabilities.exposureTime.value);
-        isoValue.textContent = manualIso ? 
-                (" "
-                    +isoSlider.value
+        exposureTimeValue.textContent = manualExposure ? 
+                ("   "
+                    +exposureTimeSlider.value
                 ).slice(-5)
             : " AUTO";
     }
+
 
     if (!('contrast' in capabilities)) {
         resetContrastButton.textContent="無効";
@@ -360,9 +407,17 @@ function updateCameraSettings() {
 
 
     if ('iso' in capabilities) {
-        isoValue.textContent = manualIso ? 
-                (" "
-                    +isoSlider.value
+        isoValue.textContent = manualExposure ? 
+                ("   "
+                    +isoValues[isoSlider.value]
+                ).slice(-5)
+            : " AUTO";
+    }
+
+    if ('exposureTime' in capabilities) {
+        exposureTimeValue.textContent = manualExposure ? 
+                ("   "
+                    +exposureTimeSlider.value
                 ).slice(-5)
             : " AUTO";
     }
