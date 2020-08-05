@@ -194,7 +194,7 @@ function addApplyCameraSettings() {
     //codec
     if ('focusMode' in capabilities) {
         focusModeSelect.hidden=false;
-        focusModeSelect.onchange=changefocusMode;
+        focusModeSelect.onchange=changeFocusMode;
     } else {
         focusModeSelect.hidden=true;
     }
