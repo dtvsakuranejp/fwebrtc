@@ -1,309 +1,258 @@
-const autoFocusButton = document.getElementById('autoFocusMode');
-const focusDistanceSlider = document.getElementById('focusDistance');
-const focusDistanceValue = document.getElementById('focusDistanceValue');
-let manualFocus=false;
+//グローバル変数
 
-const resetExposureButton = document.getElementById('resetExposure');
+//再生領域
+const videoElement = document.getElementById('my-video');
+
+//デバイス情報
+const audioSelect = document.getElementById('audioSource');
+const videoSelect = document.getElementById('videoSource');
+const deviceSelectors = [audioSelect, videoSelect];
+
+//カメラの制約
+ //値固定selectorで指定するもの
+const resolutionSelect = document.getElementById('resolution');
+const fpsSelect = document.getElementById('fps');
+const codecSelect = document.getElementById('codec');
+const focusModeSelect = document.getElementById('focusMode');
+const exposureModeSelect = document.getElementById('exposureMode');
+const whiteBalanceModeSelect = document.getElementById('whiteBalanceMode');
+const configSelectors = [resolutionSelect, fpsSelect, codecSelect, focusModeSelect, exposureModeSelect, whiteBalanceModeSelect];
+
+ //sliderで指定するもの
+const focusDistanceSlider = document.getElementById('focusDistance');  //スライダー本体
+const focusDistanceValue = document.getElementById('focusDistanceValue');  //数値の表示領域
+
 const exposureCompensationSlider = document.getElementById('exposureCompensation');
 const exposureCompensationValue = document.getElementById('exposureCompensationValue');
-
-const autoWhiteBalanceButton = document.getElementById('autoWhiteBalance');
-const colorTemperatureSlider = document.getElementById('colorTemperature');
-const colorTemperatureValue = document.getElementById('colorTemperatureValue');
-let manualWhiteBalance=false;
-
-const autoIsoButton = document.getElementById('autoIso');
 const isoSlider = document.getElementById('iso');
 const isoValue = document.getElementById('isoValue');
-const autoExposureTimeButton = document.getElementById('autoExposureTime');
 const exposureTimeSlider = document.getElementById('exposureTime');
 const exposureTimeValue = document.getElementById('exposureTimeValue');
-let manualExposure=false;
 
-const resetContrastButton = document.getElementById('autoContrast');
-const contrastSlider = document.getElementById('contrast');
-const contrastValue = document.getElementById('contrastValue');
+const colorTemperatureSlider = document.getElementById('colorTemperature');
+const colorTemperatureValue = document.getElementById('colorTemperatureValue');
 
-const resetSaturationButton = document.getElementById('autoSaturation');
-const saturationSlider = document.getElementById('saturation');
-const saturationValue = document.getElementById('saturationValue');
+//const contrastSlider = document.getElementById('contrast');
+//const contrastValue = document.getElementById('contrastValue');
+//const saturationSlider = document.getElementById('saturation');
+//const saturationValue = document.getElementById('saturationValue');
 
+//               0   1   2   3   4   5    6    7    8    9    10   11   12   13   14   15    16    17    18    19    20
 const isoValues=[32, 40, 50, 64, 80, 100, 125, 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200];//0-20
+//                        0  1  2  3  4  5   6   7   8   9   10  11  12  13  14  15   16   17   18   19   20   21   22   23   24   25    26    27    28    29    30    31    32    33    34    35     36     37   
+const exposureTimeValues=[3, 4, 5, 6, 8, 10, 13, 15, 20, 25, 30, 40, 50, 60, 80, 100, 125, 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 8000, 10000, 25000, 50000];//0-37
+let constraints = {};
 
-
-//フォーカスをオートにする
-function applyAutoFocus() {
+function changeResolution() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    const focusMode = "continuous";
-    manualFocus=false;
-    let constraints = { focusMode: { ideal: focusMode } };
-    track.applyConstraints(constraints).then(updateCameraSettings);
+    setConstraints();
+    track.applyConstraints(constraints.video).then(function(){
+        //何も無し
+    });
 }
-//フォーカス距離を反映、参考資料によりmanualを追加
-function applyFocusDistance() {
+
+function changeFps() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    const focusMode = "manual";
-    const focusDistance = focusDistanceSlider.value;
-    manualFocus=true;
-    let constraints = { focusMode: { ideal: focusMode }, focusDistance: { ideal: Number(focusDistance) } };
-    track.applyConstraints(constraints).then(updateCameraSettings);
+    setConstraints();
+    track.applyConstraints(constraints.video).then(function(){
+        //何も無し
+    });
 }
 
-//露出補正をリセットする
-function applyNomalExposure() {
-    exposureCompensationSlider.value=0;
-    applyExposureCompensation();
-}
-//露出補正を反映
-function applyExposureCompensation() {
+function changeFocusMode() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    const exposureCompensation = exposureCompensationSlider.value;
-    let constraints = { exposureCompensation: { ideal: Number(exposureCompensation) } };
-    track.applyConstraints(constraints).then(updateCameraSettings);
+    setConstraints();
+    track.applyConstraints(constraints.video).then(function(){
+        const capabilities = track.getCapabilities();
+        if ('focusDistance' in capabilities) {
+            if (focusModeSelect.value==='manual') {
+                focusDistanceSlider.hidden = false;
+                focusDistanceValue.textContent = "00"+Math.round( (focusDistanceSlider.value - focusDistanceSlider.min)
+                                                                    /(focusDistanceSlider.max - focusDistanceSlider.min)*100)
+                                                                .slice(-3);
+            } else {
+                focusDistanceSlider.hidden = true;
+                focusDistanceValue.textContent = 'AUTO';
+            }
+        }
+    });
 }
 
-//ホワイトバランスをオートにする（ならない）
-function applyAutoWhiteBalance() {
+function changeExposureMode() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    const whiteBalanceMode = "continuous";
-    manualWhiteBalance=false;
-    let constraints = { whiteBalanceMode: { ideal: whiteBalanceMode } };
-    track.applyConstraints(constraints).then(updateCameraSettings);
+    setConstraints();
+    track.applyConstraints(constraints.video).then(function(){
+        const capabilities = track.getCapabilities();
+        if ('exposureCompensation' in capabilities) {
+            if (exposureModeSelect.value==='manual') {
+                exposureCompensationSlider.hidden = false;
+                exposureCompensationValue.textContent =
+                    ("+"
+                        +Number(exposureCompensationSlider.value).toFixed(1)
+                    ).slice(-4);
+            } else {
+                exposureCompensationSlider.hidden = true;
+                exposureCompensationValue.textContent='---';
+            }
+        }
+    
+        if ('iso' in capabilities) {
+            if (exposureModeSelect.value==='manual') {
+                isoSlider.hidden = false;
+                isoValue.textContent = ("   "+isoValues[isoSlider.value]).slice(-5);
+            } else {
+                isoSlider.hidden = true;
+                isoValue.textContent = 'AUTO';
+            }
+        }
+    
+        if ('exposureTime' in capabilities) {
+            if (exposureModeSelect.value==='manual') {
+                exposureTimeSlider.hidden = false;
+                exposureTimeValue.textContent = ("     "+exposureTimeValues[exposureTimeSlider.value]).slice(-6);
+            } else {
+                exposureTimeSlider.hidden = true;
+                exposureTimeValue.textContent = 'AUTO';
+            }
+        }
+    });
 }
-//色温度を反映
-function applyColorTemperature() {
+
+function changeWhiteBalanceMode() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    const colorTemperature = colorTemperatureSlider.value;
-    const whiteBalanceMode = "manual";
-    manualWhiteBalance=true;
-    let constraints = { whiteBalanceMode: {ideal: whiteBalanceMode }, colorTemperature: {ideal: Number(colorTemperature) } };
-    track.applyConstraints(constraints).then(updateCameraSettings);
+    setConstraints();
+    track.applyConstraints(constraints.video).then(function(){
+        const capabilities = track.getCapabilities();
+        if ('colorTemperature' in capabilities) {
+            if (whiteBalanceModeSelect.value==='manual') {
+                colorTemperatureSlider.hidden = false;
+                colorTemperatureValue.textContent = (" "+colorTemperatureSlider.value).slice(-5);
+            } else {
+                colorTemperatureSlider.hidden = true;
+                colorTemperatureValue.textContent = 'AUTO';
+            }
+        }
+    });
 }
 
-
-//ISOをオートにする（ならない？）
-function applyAutoIso() {
-
-    console.log('exposure AUTO is pushed.')
+function changeFocusDistance() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    const exposureMode = "continuous";
-    manualExposure=false;
-    let constraints = { exposureMode: {ideal: exposureMode } };
-    track.applyConstraints(constraints).then(updateCameraSettings);
+    setConstraints();
+    track.applyConstraints(constraints.video).then(function(){
+        focusDistanceValue.textContent = "00"+Math.round( (focusDistanceSlider.value - focusDistanceSlider.min)
+        /(focusDistanceSlider.max - focusDistanceSlider.min)*100)
+        .slice(-3);
+    });
 }
-//ISO感度を反映
-function applyIso() {
+
+function changeExposureCompensation() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    const iso = isoValues[isoSlider.value];
-    const exposureMode = "manual";
-    manualExposure=true;
-    let constraints = { exposureMode: {ideal: exposureMode }, iso: {ideal: Number(iso) } };
-    track.applyConstraints(constraints).then(updateCameraSettings);
+    setConstraints();
+    track.applyConstraints(constraints.video).then(function(){
+        exposureCompensationValue.textContent =
+        ("+"
+            +Number(exposureCompensationSlider.value).toFixed(1)
+        ).slice(-4);
+    });
 }
 
-//シャッタースピードをオートにする（ならない？）
-function applyAutoExposureTime() {
-    applyAutoIso();    
-}
-//シャッタースピードを反映
-function applyExposureTime() {
+function changeIso() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    const exposureTime = exposureTimeSlider.value;
-    const exposureMode = "manual";
-    manualExposure=true;
-    let constraints = { exposureMode: {ideal: exposureMode }, exposureTime: {ideal: Number(exposureTime) } };
-    track.applyConstraints(constraints).then(updateCameraSettings);
+    setConstraints();
+    track.applyConstraints(constraints.video).then(function(){
+        isoValue.textContent = ("   "+isoValues[isoSlider.value]).slice(-5);
+    });
 }
 
-
-//コントラストをリセットする
-function applyNomalContrast() {
-    contrastSlider.value=0;
-    applyContrast();
-}
-//コントラストを反映
-function applyContrast() {
+function changeExposureTime() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    const contrast = contrastSlider.value;
-    let constraints = { advanced: [ { contrast: Number(contrast) }] };
-    track.applyConstraints(constraints).then(updateCameraSettings);
+    setConstraints();
+    track.applyConstraints(constraints.video).then(function(){
+        exposureTimeValue.textContent = ("     "+exposureTimeValues[exposureTimeSlider.value]).slice(-6);
+    });
 }
 
-//彩度をリセットする
-function applyNomalSaturation() {
-    saturationSlider.value=0;
-    applySaturation();
-}
-//コントラストを反映
-function applySaturation() {
+function changeColorTemperature() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    const saturation = saturationSlider.value;
-    let constraints = { advanced: [ { saturation: Number(saturation) }] };
-    track.applyConstraints(constraints).then(updateCameraSettings);
-}
-
-
-//設定に付けているイベントを削除する
-function removeApplyCameraEvent() {
-    autoFocusButton.removeEventListener('onclick',applyAutoFocus);
-    focusDistanceSlider.removeEventListener('oninput',applyFocusDistance);
-
-    resetExposureButton.removeEventListener('onclick',applyNomalExposure);
-    exposureCompensationSlider.removeEventListener('oninput',applyExposureCompensation);
-
-    autoWhiteBalanceButton.removeEventListener('onclick',applyAutoWhiteBalance);
-    colorTemperatureSlider.removeEventListener('oninput',applyColorTemperature);
-
-    autoIsoButton.removeEventListener('onclick',applyAutoIso);
-    isoSlider.removeEventListener('oninput',applyIso);
-
-    autoExposureTimeButton.removeEventListener('onclick',applyAutoExposureTime);
-    exposureTimeSlider.removeEventListener('oninput',applyExposureCompensation);
-
-    resetContrastButton.removeEventListener('onclick',applyNomalContrast);
-    contrastSlider.removeEventListener('oninput',applyContrast);
-
-    resetSaturationButton.removeEventListener('onclick',applyNomalSaturation);
-    saturationSlider.removeEventListener('oninput',applySaturation);
+    setConstraints();
+    track.applyConstraints(constraints.video).then(function(){
+        colorTemperatureValue.textContent = (" "+colorTemperatureSlider.value).slice(-5);
+    });
 }
 
 //streamに対してカメラ設定できるようにする
 function addApplyCameraSettings() {
-    getCameraSettings();
-
     //イベントリスナ追加
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const capabilities = track.getCapabilities();
+    if ('resolution' in capabilities) {
+        resolutionSelect.onchange=changeResolution;
+    }
+    if ('frameRate' in capabilities) {
+        fpsSelect.onchange=changeFps;
+    }
+    //codec
     if ('focusMode' in capabilities) {
-        autoFocusButton.onclick=applyAutoFocus;
-    }
-    if ('focusDistance' in capabilities) {
-        focusDistanceSlider.oninput=applyFocusDistance;
-    }
-    if ('exposureCompensation' in capabilities) {
-        resetExposureButton.onclick=applyNomalExposure;
-        exposureCompensationSlider.oninput=applyExposureCompensation;
-    }
-    if ('whiteBalanceMode' in capabilities) {
-        autoWhiteBalanceButton.onclick=applyAutoWhiteBalance;
-    }
-    if ('colorTemperature' in capabilities) {
-        colorTemperatureSlider.oninput=applyColorTemperature;
+        focusModeSelect.hidden=false;
+        focusModeSelect.onchange=changefocusMode;
+    } else {
+        focusModeSelect.hidden=true;
     }
     if ('exposureMode' in capabilities) {
-        autoIsoButton.oninput=applyAutoIso;
-        autoExposureTimeButton.oninput=applyAutoExposureTime;
-    }
-    if ('iso' in capabilities) {
-        isoSlider.oninput=applyIso;
-    }
-    if ('exposureTime' in capabilities) {
-        exposureTimeSlider.oninput=applyExposureTime;
-    }
-    if ('contrast' in capabilities) {
-        resetExposureButton.onclick=applyNomalContrast;
-        contrastSlider.oninput=applyContrast;
-    }
-    if ('saturation' in capabilities) {
-        resetSaturationButton.onclick=applyNomalSaturation;
-        saturationSlider.oninput=applySaturation;
-    }
-}
-
-//streamの現在をカメラ設定に反映する
-function getCameraSettings() {
-    const track = localStream.getVideoTracks()[0];//localstreamが未定義だと失敗する
-    const capabilities = track.getCapabilities();
-    const settings = track.getSettings();
-    console.log(capabilities);
-
-    if (!('focusMode' in capabilities)) {
-        autoFocusButton.textContent="無効";
+        exposureModeSelect.hidden=false;
+        exposureModeSelect.onchange=changeExposureMode;
     } else {
-        autoFocusButton.textContent="AUTO";
-        console.log('focusMode: '+capabilities.focusMode.value);
+        exposureModeSelect.hidden=true;
     }
-    if (!('focusDistance' in capabilities)) {
-        focusDistanceSlider.hidden = true;
-        focusDistanceValue.textContent='マニュアル操作不可';
+    if ('whiteBalanceMode' in capabilities) {
+        whiteBalanceModeSelect.hidden=false;
+        whiteBalanceModeSelect.onchange=changeWhiteBalanceMode;
     } else {
+        whiteBalanceModeSelect.hidden=true;
+    }
+
+    if ('focusDistance' in capabilities) {
         focusDistanceSlider.min = capabilities.focusDistance.min;
-        console.log('focusDistance.min: '+capabilities.focusDistance.min);
         focusDistanceSlider.max = capabilities.focusDistance.max;
-        console.log('focusDistance.max: '+capabilities.focusDistance.max);
-        focusDistanceSlider.step = (capabilities.focusDistance.step==0) ? 0.05 : capabilities.focusDistance.step;
-        console.log('focusDistance.step: '+capabilities.focusDistance.step);
+        focusDistanceSlider.step = (capabilities.focusDistance.step==0) ? 0.1 : capabilities.focusDistance.step;
         focusDistanceSlider.value = settings.focusDistance;
-        console.log('focusDistance.value: '+capabilities.focusDistance.value);
-        focusDistanceSlider.hidden = false;
-        focusDistanceValue.textContent = manualFocus ?
-                ("000"
-                    +Math.round(
-                                (focusDistanceSlider.value - focusDistanceSlider.min)
-                                /(focusDistanceSlider.max - focusDistanceSlider.min)*1000)
-                ).slice(-3)
-            : "AUTO";
+        if (focusModeSelect.value==='manual') {
+            focusDistanceSlider.hidden = false;
+            focusDistanceValue.textContent = "00"+Math.round( (focusDistanceSlider.value - focusDistanceSlider.min)
+                                                                /(focusDistanceSlider.max - focusDistanceSlider.min)*100)
+                                                            .slice(-3);
+        } else {
+            focusDistanceSlider.hidden = true;
+            focusDistanceValue.textContent = 'AUTO';
+        }
+        focusDistanceSlider.oninput=changeFocusDistance;
+    } else {
+        focusDistanceSlider.hidden = true;
+        focusDistanceValue.textContent = '無効';
     }
 
-    if (!('exposureCompensation' in capabilities)) {
-        resetExposureButton.textContent="無効";
-        exposureCompensationSlider.hidden = true;
-        exposureCompensationValue.textContent='マニュアル操作不可';
-    } else {
-        resetExposureButton.textContent="RESET";
+    if ('exposureCompensation' in capabilities) {
         exposureCompensationSlider.min = capabilities.exposureCompensation.min;
-        console.log('exposureCompensation.min: '+capabilities.exposureCompensation.min);
         exposureCompensationSlider.max = capabilities.exposureCompensation.max;
-        console.log('exposureCompensation.max: '+capabilities.exposureCompensation.max);
-        exposureCompensationSlider.step = (capabilities.exposureCompensation.step==0) ? 0.5 : capabilities.exposureCompensation.step;
-        console.log('exposureCompensation.step: '+capabilities.exposureCompensation.step);
+        exposureCompensationSlider.step = (capabilities.exposureCompensation.step==0) ? 1.0 : capabilities.exposureCompensation.step;
         exposureCompensationSlider.value = settings.exposureCompensation;
-        console.log('exposureCompensation.value: '+capabilities.exposureCompensation.value);
-        exposureCompensationSlider.hidden = false;
-        exposureCompensationValue.textContent =
-            ("+"
-                +Number(exposureCompensationSlider.value).toFixed(1)
-            ).slice(-4);
+        if (exposureModeSelect.value==='manual') {
+            exposureCompensationSlider.hidden = false;
+            exposureCompensationValue.textContent =
+                ("+"
+                    +Number(exposureCompensationSlider.value).toFixed(1)
+                ).slice(-4);
+        } else {
+            exposureCompensationSlider.hidden = true;
+            exposureCompensationValue.textContent='---';
+        }
+        exposureCompensationSlider.oninput=changeExposureCompensation;
+    } else {
+        exposureCompensationSlider.hidden = true;
+        exposureCompensationValue.textContent='無効';
     }
 
-    if (!('whiteBalanceMode' in capabilities)) {
-        autoWhiteBalanceButton.textContent="無効";
-    } else {
-        autoWhiteBalanceButton.textContent="AUTO";
-        console.log('whiteBalanceMode.value: '+capabilities.whiteBalanceMode.value);
-    }
-    if (!('colorTemperature' in capabilities)) {
-        colorTemperatureSlider.hidden = true;
-        colorTemperatureValue.textContent='マニュアル操作不可';
-    } else {
-        colorTemperatureSlider.min = capabilities.colorTemperature.min;
-        colorTemperatureSlider.max = capabilities.colorTemperature.max;
-        colorTemperatureSlider.step = (capabilities.colorTemperature.step==0) ? 50 : capabilities.colorTemperature.step;
-        colorTemperatureSlider.value = settings.colorTemperature;
-        colorTemperatureSlider.hidden = false;
-        console.log('colorTemperature.min: '+capabilities.colorTemperature.min);
-        console.log('colorTemperature.max: '+capabilities.colorTemperature.max);
-        console.log('colorTemperature.step: '+capabilities.colorTemperature.step);
-        console.log('colorTemperature.value: '+capabilities.colorTemperature.value);
-        colorTemperatureValue.textContent = manualWhiteBalance ? 
-                (" "
-                    +colorTemperatureSlider.value
-                ).slice(-5)
-            : " AUTO";
-    }
-
-    if (!('exposureMode' in capabilities)) {
-        autoIsoButton.textContent="無効";
-        autoExposureTimeButton.textContent="無効";
-    } else {
-        autoIsoButton.textContent="AUTO";
-        autoExposureTimeButton.textContent="AUTO";
-        console.log('exposureMode.value: '+capabilities.exposureMode.value);
-    }
-    if (!('iso' in capabilities)) {
-        isoSlider.hidden = true;
-        isoValue.textContent='マニュアル操作不可';
-    } else {
+    if ('iso' in capabilities) {
         //isoSlider.min = capabilities.iso.min;
         //isoSlider.max = capabilities.iso.max;
         //isoSlider.step = (capabilities.iso.step==0) ? 10 : capabilities.iso.step;
@@ -311,135 +260,262 @@ function getCameraSettings() {
         isoSlider.max = isoValues.length-1;
         isoSlider.step = 1;
         isoSlider.value = isoValues.indexOf(settings.iso);
-        isoSlider.hidden = false;
-        console.log('iso.min: '+capabilities.iso.min);
-        console.log('iso.max: '+capabilities.iso.max);
-        console.log('iso.step: '+capabilities.iso.step);
-        console.log('iso.value: '+capabilities.iso.value);
-        isoValue.textContent = manualExposure ? 
-                ("   "
-                    +isoValues[isoSlider.value]
-                ).slice(-5)
-            : " AUTO";
-    }
-
-    if (!('exposureTime' in capabilities)) {
-        exposureTimeSlider.hidden = true;
-        exposureTimeValue.textContent='マニュアル操作不可';
+        if (exposureModeSelect.value==='manual') {
+            isoSlider.hidden = false;
+            isoValue.textContent = ("   "+isoValues[isoSlider.value]).slice(-5);
+        } else {
+            isoSlider.hidden = true;
+            isoValue.textContent = 'AUTO';
+        }
+        isoSlider.oninput = changeIso;
     } else {
-        exposureTimeSlider.min = capabilities.exposureTime.min;
-        exposureTimeSlider.max = capabilities.exposureTime.max;
-        exposureTimeSlider.step = (capabilities.exposureTime.step==0) ? 10 : capabilities.exposureTime.step;
-        exposureTimeSlider.value = settings.exposureTime;
-        exposureTimeSlider.hidden = false;
-        console.log('exposureTime.min: '+capabilities.exposureTime.min);
-        console.log('exposureTime.max: '+capabilities.exposureTime.max);
-        console.log('exposureTime.step: '+capabilities.exposureTime.step);
-        console.log('exposureTime.value: '+capabilities.exposureTime.value);
-        exposureTimeValue.textContent = manualExposure ? 
-                ("   "
-                    +exposureTimeSlider.value
-                ).slice(-5)
-            : " AUTO";
-    }
-
-
-    if (!('contrast' in capabilities)) {
-        resetContrastButton.textContent="無効";
-        contrastSlider.hidden = true;
-        contrastValue.textContent='マニュアル操作不可';
-    } else {
-        resetContrastButton.textContent="RESET";
-        contrastSlider.min = capabilities.contrast.min;
-        contrastSlider.max = capabilities.contrast.max;
-        contrastSlider.step = (capabilities.contrast.step==0) ? 0.5 : capabilities.contrast.step;
-        contrastSlider.value = settings.contrast;
-        contrastSlider.hidden = false;
-        contrastValue.textContent =
-            ("+"
-                +Number(contrastSlider.value).toFixed(1)
-            ).slice(-4);
-    }
-
-    if (!('saturation' in capabilities)) {
-        resetSaturationButton.textContent="無効";
-        saturationSlider.hidden = true;
-        saturationValue.textContent='マニュアル操作不可';
-    } else {
-        resetSaturationButton.textContent="RESET";
-        saturationSlider.min = capabilities.saturation.min;
-        saturationSlider.max = capabilities.saturation.max;
-        saturationSlider.step = (capabilities.saturation.step==0) ? 0.5 : capabilities.saturation.step;
-        saturationSlider.value = settings.saturation;
-        saturationSlider.hidden = false;
-        saturationValue.textContent =
-            ("+"
-                +Number(saturationSlider.value).toFixed(1)
-            ).slice(-4);
-    }
-
-
-
-}
-
-function updateCameraSettings() {
-    const track = localStream.getVideoTracks()[0];//localstreamが未定義だと失敗する
-    const capabilities = track.getCapabilities();
-
-    if ('focusDistance' in capabilities) {
-        focusDistanceValue.textContent = manualFocus ?
-                ("000"
-                    +Math.round(
-                                (focusDistanceSlider.value - focusDistanceSlider.min)
-                                /(focusDistanceSlider.max - focusDistanceSlider.min)*1000)
-                ).slice(-3)
-            : "AUTO";
-    }
-    if ('exposureCompensation' in capabilities) {
-        exposureCompensationValue.textContent =
-            ("+"
-                +Number(exposureCompensationSlider.value).toFixed(1)
-            ).slice(-4);
-    }
-    if ('colorTemperature' in capabilities) {
-        colorTemperatureValue.textContent = manualWhiteBalance ? 
-                (" "
-                    +colorTemperatureSlider.value
-                ).slice(-5)
-            : " AUTO";
-    }
-
-
-
-
-    if ('iso' in capabilities) {
-        isoValue.textContent = manualExposure ? 
-                ("   "
-                    +isoValues[isoSlider.value]
-                ).slice(-5)
-            : " AUTO";
+        isoSlider.hidden = true;
+        isoValue.textContent = '無効';
     }
 
     if ('exposureTime' in capabilities) {
-        exposureTimeValue.textContent = manualExposure ? 
-                ("   "
-                    +exposureTimeSlider.value
-                ).slice(-5)
-            : " AUTO";
+        //exposureTimeSlider.min = capabilities.exposureTime.min;
+        //exposureTimeSlider.max = capabilities.exposureTime.max;
+        //exposureTimeSlider.step = (capabilities.exposureTime.step==0) ? 10 : capabilities.exposureTime.step;
+        exposureTimeSlider.min = 0;
+        exposureTimeSlider.max = exposureTimeValues.length-1;
+        exposureTimeSlider.step = 1;
+        exposureTimeSlider.value = exposureTimeValues.indexOf(settings.exposureTime);
+        if (exposureModeSelect.value==='manual') {
+            exposureTimeSlider.hidden = false;
+            exposureTimeValue.textContent = ("     "+exposureTimeValues[exposureTimeSlider.value]).slice(-6);
+        } else {
+            exposureTimeSlider.hidden = true;
+            exposureTimeValue.textContent = 'AUTO';
+        }
+        exposureTimeSlider.oninput = changeExposureTime;
+    } else {
+        exposureTimeSlider.hidden = true;
+        exposureTimeValue.textContent = '無効';
     }
 
-    if ('contrast' in capabilities) {
-        contrastValue.textContent =
-            ("+"
-                +Number(contrastSlider.value).toFixed(1)
-            ).slice(-4);
+    if ('colorTemperature' in capabilities) {
+        colorTemperatureSlider.min = capabilities.colorTemperature.min;
+        colorTemperatureSlider.max = capabilities.colorTemperature.max;
+        colorTemperatureSlider.step = (capabilities.colorTemperature.step==0) ? 200 : capabilities.colorTemperature.step;
+        colorTemperatureSlider.value = settings.colorTemperature;
+        if (whiteBalanceModeSelect.value==='manual') {
+            colorTemperatureSlider.hidden = false;
+            colorTemperatureValue.textContent = (" "+colorTemperatureSlider.value).slice(-5);
+        } else {
+            colorTemperatureSlider.hidden = true;
+            colorTemperatureValue.textContent = 'AUTO';
+        }
+        colorTemperatureSlider.oninput=changeColorTemperature;
+    } else {
+        colorTemperatureSlider.hidden = true;
+        colorTemperatureValue.textContent = '無効';
     }
-
-    if ('saturation' in capabilities) {
-        saturationValue.textContent =
-            ("+"
-                +Number(saturationSlider.value).toFixed(1)
-            ).slice(-4);
-    }
-
+    //contrast
+    //saturation
 }
+
+//設定に付けているイベントを削除する
+function removeApplyCameraEvent() {
+    resolutionSelect.removeEventListener('onchange',changeResolution);
+    fpsSelect.removeEventListener('onchange',changeFps);
+    // codecSelect
+    focusModeSelect.removeEventListener('onchange',changeFocusMode);
+    exposureModeSelect.removeEventListener('onchange',changeExposureMode);
+    whiteBalanceModeSelect.removeEventListener('onchange',changeWhiteBalanceMode);
+
+    focusDistanceSlider.removeEventListener('oninput',changeFocusDistance);
+    exposureCompensationSlider.removeEventListener('oninput',changeExposureCompensation);
+    isoSlider.removeEventListener('oninput',changeIso);
+    exposureTimeSlider.removeEventListener('oninput',changeExposureTime);
+    colorTemperatureSlider.removeEventListener('oninput',changeColorTemperature);
+
+    //contrastSlider.removeEventListener('oninput',changeContrast);
+    //saturationSlider.removeEventListener('oninput',changeSaturation);
+}
+
+
+function setConstraints() {
+    //制約を丸ごと全部作る
+    const audioSource = audioSelect.value;
+    const videoSource = videoSelect.value;
+    const resolutionWidth = resolutionSelect.value/9*16;
+    const resolutionHeight = resolutionSelect.value;
+    const frameRate = fpsSelect.value;
+
+    const focusMode = focusModeSelect.value;
+    const focusDistance = focusDistanceSlider.value;
+
+    const exposureMode = exposureModeSelect.value;
+    const exposureCompensation = exposureCompensationSlider.value;
+    const iso = isoValues[Number(isoSlider.value)];
+    const exposureTime = exposureTimeValues[Number(exposureTimeSlider.value)];
+
+    const whiteBalanceMode = whiteBalanceModeSelect.value;
+    const colorTemperature = colorTemperatureSlider.value;
+
+    constraints = {};
+    constraints.audio = {};
+    constraints.audio.deviceId = audioSource ? {exact: audioSource} : undefined;
+    constraints.video = {}
+    constraints.video.deviceId = videoSource ? {exact: videoSource} : undefined;
+    constraints.video.width = {ideal: Number(resolutionWidth)};
+    constraints.video.height = {ideal: Number(resolutionHeight)};
+    constraints.video.framerate = {ideal: Number(frameRate)};
+
+    let constraintsVideoAdvancedFocus = {};
+    constraintsVideoAdvancedFocus.focusMode = focusMode;
+    if (focusMode==='manual') {
+        constraintsVideoAdvancedFocus.focusDistance = Number(focusDistance);
+    }
+
+    let constraintsVideoAdvancedExposure = {};
+    constraintsVideoAdvancedExposure.exposureMode = exposureMode;
+    if (exposureMode==='manual') {
+        constraintsVideoAdvancedExposure.iso = Number(iso);
+        constraintsVideoAdvancedExposure.exposureTime = Number(exposureTime);
+    } else {
+        constraintsVideoAdvancedExposure.exposureCompensation = Number(exposureCompensation);
+    }
+
+    let constraintsVideoAdvancedWhiteBalance = {};
+    constraintsVideoAdvancedWhiteBalance.whiteBalanceMode = whiteBalanceMode;
+    if (whiteBalanceMode==='manual') {
+        constraintsVideoAdvancedWhiteBalance.colorTemperature = Number(colorTemperature);
+    }
+    console.log(constraints);
+    constraints.video.advanced = [ constraintsVideoAdvancedFocus, constraintsVideoAdvancedExposure, constraintsVideoAdvancedWhiteBalance ];
+    console.log(constraints);
+}
+
+
+function setCameraConfig() {
+    //streamを全部止める前にallpyで持っているイベントリスナを停止する
+    removeApplyCameraEvent();
+    //streamを作る前に今あるstreamを全部止める
+    if (window.stream) {
+      window.stream.getTracks().forEach(track => {
+        track.stop();
+      });
+    }
+    setConstraints();
+
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then(gotStream)
+      .then(gotDevices)
+      .then(function(){
+        localStream=stream;
+        setTimeout(function(){addApplyCameraSettings()},1000);//localstreamが取得できてしばらくしたらカメラ設定を反映
+      })
+      .catch(handleError);
+}
+
+//画質設定のオプションを選ぶ
+function setOptions() {
+    const cameraOptions = [
+        ['resolution', '1080', '1080p',true],
+        ['resolution', '720', '720p',false],
+        ['resolution', '480', '480p',false],
+        ['fps', '10', '10fps',false],
+        ['fps', '15', '15fps',true],
+        ['fps', '30', '30fps',false],
+        ['codec', 'H264', 'H.264',true],
+        ['codec', 'VP9', 'VP9(safari不可)',false],
+        ['focusMode', 'continuous', '自動',true],
+        ['focusMode', 'manual', 'マニュアル',false],
+        ['exposureMode', 'continuous', '自動',true],
+        ['exposureMode', 'manual', 'マニュアル',false],
+        ['whiteBalanceMode', 'continuous', '自動',true],
+        ['whiteBalanceMode', 'manual', 'マニュアル',false],
+    ];
+    const values = configSelectors.map(select => select.value);
+    configSelectors.forEach(select => {
+      while (select.firstChild) {
+        select.removeChild(select.firstChild);
+      }
+    });
+    cameraOptions.forEach(function(cameraoption) {
+        let select;
+        const option = document.createElement('option');
+        option.label = cameraoption[2];
+        option.value = cameraoption[1];
+        const selected = cameraoption[3];
+        if ( cameraoption[0]==='resolution') {
+            select=resolutionSelect;
+        } else if (cameraoption[0]==='fps') {
+            select=fpsSelect;
+        } else if (cameraoption[0]==='codec') {
+            select=codecSelect;
+        } else if (cameraoption[0]==='focusMode') {
+            select=focusModeSelect;
+        } else if (cameraoption[0]==='whiteBalanceMode') {
+            select=whiteBalanceModeSelect;
+        } else {
+          // console.log('Some other kind of source/device: ', deviceInfo);
+        }
+        if (!(typeof select === 'undefined')) {
+          select.appendChild(option);
+          select.options[select.options.length-1].selected=selected;
+        }
+      });
+    configSelectors.forEach((select, selectorIndex) => {
+        if (Array.prototype.slice.call(select.childNodes).some(n => n.value === values[selectorIndex])) {
+            select.value = values[selectorIndex];
+        };
+    });
+}
+
+//デバイスを切り替える場合はストリームの取り直し
+function gotDevices(deviceInfos) {
+
+  //今選択されているものを覚えておく
+  const values = deviceSelectors.map(select => select.value);
+
+  //selectorのクリア
+  deviceSelectors.forEach(select => {
+    while (select.firstChild) {
+      select.removeChild(select.firstChild);
+    }
+  });
+
+  //引数で渡されたデバイスをselectorにセットする
+  for (let i = 0; i !== deviceInfos.length; ++i) {
+    const deviceInfo = deviceInfos[i];
+    const option = document.createElement('option');
+    option.value = deviceInfo.deviceId;
+
+    //デバイスのkindによってオーディオとビデオの選択肢に振り分け
+    if (deviceInfo.kind === 'audioinput') {
+      option.text = deviceInfo.label || `microphone ${audioSelect.length + 1}`;
+      audioSelect.appendChild(option);
+    } else if (deviceInfo.kind === 'videoinput') {
+      option.text = deviceInfo.label || `camera ${videoSelect.length + 1}`;
+      videoSelect.appendChild(option);
+    } else {
+      //オーディオでもビデオでもないものはログに出すのみ
+      console.log('Some other kind of source/device: ', deviceInfo);
+    }
+  }
+  //最初に覚えておいた選択肢にセットしなおす
+  deviceSelectors.forEach((select, selectorIndex) => {
+    if (Array.prototype.slice.call(select.childNodes).some(n => n.value === values[selectorIndex])) {
+      select.value = values[selectorIndex];
+    }
+  });
+}
+//初期設定する
+navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(handleError);
+
+//エラーログ出力
+function handleError(error) {
+  console.log('navigator.MediaDevices.getUserMedia error: ', error.message, error.name);
+}
+
+//streamオフジェクトをビデオ枠にセットする
+function gotStream(stream) {
+  window.stream = stream; // make stream available to console
+  videoElement.srcObject = stream;
+  // Refresh button list in case labels have become available
+  return navigator.mediaDevices.enumerateDevices();
+}
+

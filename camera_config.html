@@ -61,67 +61,73 @@
                 <video id="my-video" width="480px" height="270px" controls autoplay muted playsinline></video>
             </div>
 
-            <!--フォーカス-->
+            <!--オートかマニュアルか-->
+            <div>
+                <div class="select">
+                    <label for="focusMode">フォーカス: </label><select id="focusMode"></select>
+                </div>
+                <div class="select">
+                    <label for="exposureMode">露出: </label><select id="exposureMode"></select>
+                </div>
+                <div class="select">
+                    <label for="whiteBalanceMode">ホワイトバランス: </label><select id="whiteBalanceMode"></select>
+                </div>
+            </div>
+        
+            <!--マニュアルフォーカス-->
             <div style="margin: 0.2m;border:solid gray 1px;">
                 <div>
                     <span style="margin:0.5em;width:10em;">フォーカス： </span>
                     <span id="focusDistanceValue">不明</span>
-                    <button id="autoFocusMode">AUTO</button>
                 </div>
                 <div style="text-align:center;">
                     <input type="range" id="focusDistance" style="width:400px;"></select>
                 </div>
             </div>
 
-            <!--露出-->
+            <!--マニュアル露出-->
             <div style="margin: 0.2m;border:solid gray 1px;">
                 <div>
                     <span style="margin:0.5em;">露出補正： </span>
                     <span id="exposureCompensationValue">不明</span>
-                    <button id="resetExposure">RESET</button>
                 </div>
                 <div style="text-align:center;">
                     <input type="range" id="exposureCompensation" style="width:400px;"></select>
                 </div>
             </div>
 
-            <!--ホワイトバランス-->
-            <div style="margin: 0.2m;border:solid gray 1px;">
-                <div>
-                    <span style="margin:0.5em;">ホワイトバランス： </span>
-                    <span id="colorTemperatureValue">不明</span>
-                    <button id="autoWhiteBalance">AUTO</button>
-                </div>
-                <div style="text-align:center;">
-                    <input type="range" id="colorTemperature" style="width:400px;"></select>
-                </div>
-            </div>
-
-
-            <!--ISO-->
+            <!--マニュアルISO-->
             <div style="margin: 0.2m;border:solid gray 1px;">
                 <div>
                     <span style="margin:0.5em;">ISO感度： </span>
                     <span id="isoValue">不明</span>
-                    <button id="autoIso">AUTO</button>
                 </div>
                 <div style="text-align:center;">
                     <input type="range" id="iso" style="width:400px;"></select>
                 </div>
             </div>
 
-            <!--シャッタースピード-->
+            <!--マニュアルシャッタースピード-->
             <div style="margin: 0.2m;border:solid gray 1px;">
                 <div>
-                    <span style="margin:0.5em;">ISO感度： </span>
+                    <span style="margin:0.5em;">シャッタースピード： </span>
                     <span id="exposureTimeValue">不明</span>
-                    <button id="autoExposureTime">AUTO</button>
                 </div>
                 <div style="text-align:center;">
                     <input type="range" id="exposureTime" style="width:400px;"></select>
                 </div>
             </div>
-
+            
+            <!--マニュアルホワイトバランス-->
+            <div style="margin: 0.2m;border:solid gray 1px;">
+                <div>
+                    <span style="margin:0.5em;">ホワイトバランス： </span>
+                    <span id="colorTemperatureValue">不明</span>
+                </div>
+                <div style="text-align:center;">
+                    <input type="range" id="colorTemperature" style="width:400px;"></select>
+                </div>
+            </div>
 
             <!--コントラスト-->
             <div style="margin: 0.2m;border:solid gray 1px;">
@@ -147,14 +153,7 @@
                 </div>
             </div>
 
-
-
-
         </div>
-
-
-
-
 
 
         <!--通信欄-->
@@ -168,8 +167,6 @@
         </div>
     </div>
     
-    <script src="./cameraselect.js" async></script>
-    <script src="./cameraconfig_v2.js" async></script>
     <script src="./cameraapply_v2.js" async></script>
 
     <script>
@@ -324,9 +321,6 @@
             setOptions();
             audioSelect.onchange = start;
             videoSelect.onchange = start;
-            resolutionSelect.onchange = start;
-            fpsSelect.onchange = start;
-            codecSelect.onchange = start;
             start();
         }
 
