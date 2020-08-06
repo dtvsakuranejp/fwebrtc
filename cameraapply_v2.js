@@ -67,9 +67,9 @@ function changeFocusMode() {
         if ('focusDistance' in capabilities) {
             if (focusModeSelect.value==='manual') {
                 focusDistanceSlider.hidden = false;
-                focusDistanceValue.textContent = "00"+Math.round( (focusDistanceSlider.value - focusDistanceSlider.min)
+                focusDistanceValue.textContent = ("00"+Math.round( (focusDistanceSlider.value - focusDistanceSlider.min)
                                                                     /(focusDistanceSlider.max - focusDistanceSlider.min)*100)
-                                                                .slice(-3);
+                ).slice(-3);
             } else {
                 focusDistanceSlider.hidden = true;
                 focusDistanceValue.textContent = 'AUTO';
@@ -139,9 +139,9 @@ function changeFocusDistance() {
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     setConstraints();
     track.applyConstraints(constraints.video).then(function(){
-        focusDistanceValue.textContent = "00"+Math.round( (focusDistanceSlider.value - focusDistanceSlider.min)
+        focusDistanceValue.textContent = ("00"+Math.round( (focusDistanceSlider.value - focusDistanceSlider.min)
         /(focusDistanceSlider.max - focusDistanceSlider.min)*100)
-        .slice(-3);
+        ).slice(-3);
     });
 }
 
@@ -222,9 +222,9 @@ function addApplyCameraSettings() {
         focusDistanceSlider.value = settings.focusDistance;
         if (focusModeSelect.value==='manual') {
             focusDistanceSlider.hidden = false;
-            focusDistanceValue.textContent = "00"+Math.round( (focusDistanceSlider.value - focusDistanceSlider.min)
+            focusDistanceValue.textContent = ("00"+Math.round( (focusDistanceSlider.value - focusDistanceSlider.min)
                                                                 /(focusDistanceSlider.max - focusDistanceSlider.min)*100)
-                                                            .slice(-3);
+            ).slice(-3);
         } else {
             focusDistanceSlider.hidden = true;
             focusDistanceValue.textContent = 'AUTO';
