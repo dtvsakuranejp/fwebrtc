@@ -185,7 +185,9 @@ function addApplyCameraSettings() {
     //イベントリスナ追加
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const capabilities = track.getCapabilities();
+    console.log(capabilities);
     const settings = track.getSettings();
+    console.log(settings);
 
     if ('resolution' in capabilities) {
         resolutionSelect.onchange=changeResolution;
