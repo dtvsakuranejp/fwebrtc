@@ -46,6 +46,7 @@ function changeResolution() {
     console.log('change resolution.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const constraints = setConstraints();
+    console.log(constraints.video);
     track.applyConstraints(constraints.video).then(function(){
         //何も無し
     });
