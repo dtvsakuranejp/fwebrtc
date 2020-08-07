@@ -400,6 +400,8 @@ function setConstraints() {
     }
     constraints.video.advanced = [ constraintsVideoAdvancedFocus, constraintsVideoAdvancedExposure, constraintsVideoAdvancedWhiteBalance ];
     console.log(constraints);
+
+    return constraints;
 }
 
 function setNewDeviceConstraints() {
@@ -418,6 +420,8 @@ function setNewDeviceConstraints() {
     constraints.video.width = {ideal: Number(resolutionWidth)};
     constraints.video.height = {ideal: Number(resolutionHeight)};
     constraints.video.framerate = {ideal: Number(frameRate)};
+
+    return constraints;
 }
 
 function setCameraConfig() {
