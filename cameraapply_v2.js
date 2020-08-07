@@ -499,7 +499,7 @@ function setOptions() {
     //    if (Array.prototype.slice.call(select.childNodes).some(n => n.value === values[selectorIndex])) {
     //        select.value = values[selectorIndex];
     //    };
-    });
+    //});
 }
 
 //デバイスを切り替える場合はストリームの取り直し
