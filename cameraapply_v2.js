@@ -185,9 +185,7 @@ function addApplyCameraSettings() {
     //イベントリスナ追加
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     const capabilities = track.getCapabilities();
-    console.log(capabilities);
     const settings = track.getSettings();
-    console.log(settings);
 
     if ('resolution' in capabilities) {
         resolutionSelect.onchange=changeResolution;
@@ -263,7 +261,7 @@ function addApplyCameraSettings() {
         isoSlider.min = 0;
         isoSlider.max = isoValues.length-1;
         isoSlider.step = 1;
-        isoSlider.value = isoValues.indexOf(settings.iso);
+        isoSlider.value = 0;//isoValues.indexof(settings.iso);
         if (exposureModeSelect.value==='manual') {
             isoSlider.hidden = false;
             isoValue.textContent = ("   "+isoValues[isoSlider.value]).slice(-5);
@@ -284,7 +282,7 @@ function addApplyCameraSettings() {
         exposureTimeSlider.min = 0;
         exposureTimeSlider.max = exposureTimeValues.length-1;
         exposureTimeSlider.step = 1;
-        exposureTimeSlider.value = exposureTimeValues.indexOf(settings.exposureTime);
+        exposureTimeSlider.value = 0;//exposureTimeValues.indexof(settings.exposureTime);
         if (exposureModeSelect.value==='manual') {
             exposureTimeSlider.hidden = false;
             exposureTimeValue.textContent = ("     "+exposureTimeValues[exposureTimeSlider.value]).slice(-6);
@@ -392,6 +390,23 @@ function setConstraints() {
     console.log(constraints);
 }
 
+function setNewDeviceConstraints() {
+    //制約を丸ごと全部作る
+    const audioSource = audioSelect.value;
+    const videoSource = videoSelect.value;
+    const resolutionWidth = resolutionSelect.value/9*16;
+    const resolutionHeight = resolutionSelect.value;
+    const frameRate = fpsSelect.value;
+
+    constraints = {};
+    constraints.audio = {};
+    constraints.audio.deviceId = audioSource ? {exact: audioSource} : undefined;
+    constraints.video = {}
+    constraints.video.deviceId = videoSource ? {exact: videoSource} : undefined;
+    constraints.video.width = {ideal: Number(resolutionWidth)};
+    constraints.video.height = {ideal: Number(resolutionHeight)};
+    constraints.video.framerate = {ideal: Number(frameRate)};
+}
 
 function setCameraConfig() {
     //streamを全部止める前にallpyで持っているイベントリスナを停止する
@@ -402,7 +417,7 @@ function setCameraConfig() {
         track.stop();
       });
     }
-    setConstraints();
+    setNewDeviceConstraints();//新しいデバイスにチェンジする時に必要な制約をセットする。
 
     navigator.mediaDevices.getUserMedia(constraints)
       .then(gotStream)
@@ -452,6 +467,8 @@ function setOptions() {
             select=codecSelect;
         } else if (cameraoption[0]==='focusMode') {
             select=focusModeSelect;
+        } else if (cameraoption[0]==='exposureMode') {
+            select=exposureModeSelect;
         } else if (cameraoption[0]==='whiteBalanceMode') {
             select=whiteBalanceModeSelect;
         } else {
