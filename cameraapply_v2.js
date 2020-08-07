@@ -457,11 +457,14 @@ function setOptions() {
         ['fps', '30', '30fps',false],
         ['codec', 'H264', 'H.264',true],
         ['codec', 'VP9', 'VP9(safari不可)',false],
-        ['focusMode', 'continuous', '自動',true],
+//        ['focusMode', 'continuous', '自動',true],
+        ['focusMode', '', '自動',true],
         ['focusMode', 'manual', 'マニュアル',false],
-        ['exposureMode', 'continuous', '自動',true],
+//        ['exposureMode', 'continuous', '自動',true],
+        ['exposureMode', '', '自動',true],
         ['exposureMode', 'manual', 'マニュアル',false],
-        ['whiteBalanceMode', 'continuous', '自動',true],
+//        ['whiteBalanceMode', 'continuous', '自動',true],
+        ['whiteBalanceMode', '', '自動',true],
         ['whiteBalanceMode', 'manual', 'マニュアル',false],
     ];
     const values = configSelectors.map(select => select.value);
