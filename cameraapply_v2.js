@@ -41,12 +41,11 @@ const colorTemperatureValue = document.getElementById('colorTemperatureValue');
 const isoValues=[32, 40, 50, 64, 80, 100, 125, 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200];//0-20
 //                        0  1  2  3  4  5   6   7   8   9   10  11  12  13  14  15   16   17   18   19   20   21   22   23   24   25    26    27    28    29    30    31    32    33    34    35     36     37   
 const exposureTimeValues=[3, 4, 5, 6, 8, 10, 13, 15, 20, 25, 30, 40, 50, 60, 80, 100, 125, 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 8000, 10000, 25000, 50000];//0-37
-let constraints = {};
 
 function changeResolution() {
     console.log('change resolution.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    setConstraints();
+    const constraints = setConstraints();
     track.applyConstraints(constraints.video).then(function(){
         //何も無し
     });
@@ -55,7 +54,7 @@ function changeResolution() {
 function changeFps() {
     console.log('change frameRate.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    setConstraints();
+    const constraints = setConstraints();
     track.applyConstraints(constraints.video).then(function(){
         //何も無し
     });
@@ -64,7 +63,7 @@ function changeFps() {
 function changeFocusMode() {
     console.log('change focusMode.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    setConstraints();
+    const constraints = setConstraints();
     track.applyConstraints(constraints.video).then(function(){
         const capabilities = track.getCapabilities();
         if ('focusDistance' in capabilities) {
@@ -84,7 +83,7 @@ function changeFocusMode() {
 function changeExposureMode() {
     console.log('change exposureMode.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    setConstraints();
+    const constraints = setConstraints();
     track.applyConstraints(constraints.video).then(function(){
         const capabilities = track.getCapabilities();
         if ('exposureCompensation' in capabilities) {
@@ -125,7 +124,7 @@ function changeExposureMode() {
 function changeWhiteBalanceMode() {
     console.log('change whiteBalanceMode.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    setConstraints();
+    const constraints = setConstraints();
     track.applyConstraints(constraints.video).then(function(){
         const capabilities = track.getCapabilities();
         if ('colorTemperature' in capabilities) {
@@ -143,7 +142,7 @@ function changeWhiteBalanceMode() {
 function changeFocusDistance() {
     console.log('change focusDistance.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    setConstraints();
+    const constraints = setConstraints();
     track.applyConstraints(constraints.video).then(function(){
         focusDistanceValue.textContent = ("00"+Math.round( (focusDistanceSlider.value - focusDistanceSlider.min)
         /(focusDistanceSlider.max - focusDistanceSlider.min)*100)
@@ -154,7 +153,7 @@ function changeFocusDistance() {
 function changeExposureCompensation() {
     console.log('change exposureCompensation.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    setConstraints();
+    const constraints = setConstraints();
     track.applyConstraints(constraints.video).then(function(){
         exposureCompensationValue.textContent =
         ("+"
@@ -166,7 +165,7 @@ function changeExposureCompensation() {
 function changeIso() {
     console.log('change iso.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    setConstraints();
+    const constraints = setConstraints();
     track.applyConstraints(constraints.video).then(function(){
         isoValue.textContent = ("   "+isoValues[isoSlider.value]).slice(-5);
     });
@@ -175,7 +174,7 @@ function changeIso() {
 function changeExposureTime() {
     console.log('change exposureTime.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    setConstraints();
+    const constraints = setConstraints();
     track.applyConstraints(constraints.video).then(function(){
         exposureTimeValue.textContent = ("     "+exposureTimeValues[exposureTimeSlider.value]).slice(-6);
     });
@@ -184,7 +183,7 @@ function changeExposureTime() {
 function changeColorTemperature() {
     console.log('change colorTemperature.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
-    setConstraints();
+    const constraints = setConstraints();
     track.applyConstraints(constraints.video).then(function(){
         colorTemperatureValue.textContent = (" "+colorTemperatureSlider.value).slice(-5);
     });
@@ -370,10 +369,10 @@ function setConstraints() {
     const whiteBalanceMode = whiteBalanceModeSelect.value;
     const colorTemperature = colorTemperatureSlider.value;
 
-    constraints = {};
+    let constraints = {};
     constraints.audio = {};
     constraints.audio.deviceId = audioSource ? {exact: audioSource} : undefined;
-    constraints.video = {}
+    constraints.video = {};
     constraints.video.deviceId = videoSource ? {exact: videoSource} : undefined;
     constraints.video.width = {ideal: Number(resolutionWidth)};
     constraints.video.height = {ideal: Number(resolutionHeight)};
@@ -399,7 +398,6 @@ function setConstraints() {
     if (whiteBalanceMode==='manual') {
         constraintsVideoAdvancedWhiteBalance.colorTemperature = Number(colorTemperature);
     }
-    console.log(constraints);
     constraints.video.advanced = [ constraintsVideoAdvancedFocus, constraintsVideoAdvancedExposure, constraintsVideoAdvancedWhiteBalance ];
     console.log(constraints);
 }
@@ -412,7 +410,7 @@ function setNewDeviceConstraints() {
     const resolutionHeight = resolutionSelect.value;
     const frameRate = fpsSelect.value;
 
-    constraints = {};
+    let constraints = {};
     constraints.audio = {};
     constraints.audio.deviceId = audioSource ? {exact: audioSource} : undefined;
     constraints.video = {}
@@ -432,7 +430,7 @@ function setCameraConfig() {
       });
     }
     setOptions();//selectorの内容をリセットする。
-    setNewDeviceConstraints();//新しいデバイスにチェンジする時に必要な制約をセットする。
+    const constraints = setNewDeviceConstraints();//新しいデバイスにチェンジする時に必要な制約をセットする。
 
     navigator.mediaDevices.getUserMedia(constraints)
       .then(gotStream)
