@@ -44,6 +44,7 @@ const exposureTimeValues=[3, 4, 5, 6, 8, 10, 13, 15, 20, 25, 30, 40, 50, 60, 80,
 let constraints = {};
 
 function changeResolution() {
+    console.log('change resolution.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     setConstraints();
     track.applyConstraints(constraints.video).then(function(){
@@ -52,6 +53,7 @@ function changeResolution() {
 }
 
 function changeFps() {
+    console.log('change frameRate.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     setConstraints();
     track.applyConstraints(constraints.video).then(function(){
@@ -60,6 +62,7 @@ function changeFps() {
 }
 
 function changeFocusMode() {
+    console.log('change focusMode.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     setConstraints();
     track.applyConstraints(constraints.video).then(function(){
@@ -79,6 +82,7 @@ function changeFocusMode() {
 }
 
 function changeExposureMode() {
+    console.log('change exposureMode.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     setConstraints();
     track.applyConstraints(constraints.video).then(function(){
@@ -119,6 +123,7 @@ function changeExposureMode() {
 }
 
 function changeWhiteBalanceMode() {
+    console.log('change whiteBalanceMode.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     setConstraints();
     track.applyConstraints(constraints.video).then(function(){
@@ -136,6 +141,7 @@ function changeWhiteBalanceMode() {
 }
 
 function changeFocusDistance() {
+    console.log('change focusDistance.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     setConstraints();
     track.applyConstraints(constraints.video).then(function(){
@@ -146,6 +152,7 @@ function changeFocusDistance() {
 }
 
 function changeExposureCompensation() {
+    console.log('change exposureCompensation.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     setConstraints();
     track.applyConstraints(constraints.video).then(function(){
@@ -157,6 +164,7 @@ function changeExposureCompensation() {
 }
 
 function changeIso() {
+    console.log('change iso.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     setConstraints();
     track.applyConstraints(constraints.video).then(function(){
@@ -165,6 +173,7 @@ function changeIso() {
 }
 
 function changeExposureTime() {
+    console.log('change exposureTime.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     setConstraints();
     track.applyConstraints(constraints.video).then(function(){
@@ -173,6 +182,7 @@ function changeExposureTime() {
 }
 
 function changeColorTemperature() {
+    console.log('change colorTemperature.')
     const track = localStream.getVideoTracks()[0];//localStreamが未定義だと失敗する
     setConstraints();
     track.applyConstraints(constraints.video).then(function(){
@@ -214,6 +224,7 @@ function addApplyCameraSettings() {
     }
 
     if ('focusDistance' in capabilities) {
+        focusDistanceSlider.value=undefined;
         focusDistanceSlider.min = capabilities.focusDistance.min;
         focusDistanceSlider.max = capabilities.focusDistance.max;
         focusDistanceSlider.step = (capabilities.focusDistance.step==0) ? 0.1 : capabilities.focusDistance.step;
@@ -234,6 +245,7 @@ function addApplyCameraSettings() {
     }
 
     if ('exposureCompensation' in capabilities) {
+        exposureCompensationSlider.value = undefined;
         exposureCompensationSlider.min = capabilities.exposureCompensation.min;
         exposureCompensationSlider.max = capabilities.exposureCompensation.max;
         exposureCompensationSlider.step = (capabilities.exposureCompensation.step==0) ? 1.0 : capabilities.exposureCompensation.step;
@@ -279,6 +291,7 @@ function addApplyCameraSettings() {
         //exposureTimeSlider.min = capabilities.exposureTime.min;
         //exposureTimeSlider.max = capabilities.exposureTime.max;
         //exposureTimeSlider.step = (capabilities.exposureTime.step==0) ? 10 : capabilities.exposureTime.step;
+        exposureTimeSlider.value = undefined;
         exposureTimeSlider.min = 0;
         exposureTimeSlider.max = exposureTimeValues.length-1;
         exposureTimeSlider.step = 1;
@@ -297,6 +310,7 @@ function addApplyCameraSettings() {
     }
 
     if ('colorTemperature' in capabilities) {
+        colorTemperatureSlider.value = undefined;
         colorTemperatureSlider.min = capabilities.colorTemperature.min;
         colorTemperatureSlider.max = capabilities.colorTemperature.max;
         colorTemperatureSlider.step = (capabilities.colorTemperature.step==0) ? 200 : capabilities.colorTemperature.step;
