@@ -197,7 +197,7 @@ function addApplyCameraSettings() {
     const capabilities = track.getCapabilities();
     const settings = track.getSettings();
 
-    if ('resolution' in capabilities) {
+    if (('width' in capabilities)&&('height' in capabilities)) {
         resolutionSelect.onchange=changeResolution;
     }
     if ('frameRate' in capabilities) {
