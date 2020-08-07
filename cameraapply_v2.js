@@ -431,6 +431,7 @@ function setCameraConfig() {
         track.stop();
       });
     }
+    setOptions();//selectorの内容をリセットする。
     setNewDeviceConstraints();//新しいデバイスにチェンジする時に必要な制約をセットする。
 
     navigator.mediaDevices.getUserMedia(constraints)
@@ -493,10 +494,11 @@ function setOptions() {
           select.options[select.options.length-1].selected=selected;
         }
       });
-    configSelectors.forEach((select, selectorIndex) => {
-        if (Array.prototype.slice.call(select.childNodes).some(n => n.value === values[selectorIndex])) {
-            select.value = values[selectorIndex];
-        };
+    //setOption呼び出し前の状態を反映させる場合は実行
+    //configSelectors.forEach((select, selectorIndex) => {
+    //    if (Array.prototype.slice.call(select.childNodes).some(n => n.value === values[selectorIndex])) {
+    //        select.value = values[selectorIndex];
+    //    };
     });
 }
 
