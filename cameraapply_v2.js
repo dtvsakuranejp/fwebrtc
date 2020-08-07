@@ -415,7 +415,7 @@ function setNewDeviceConstraints() {
     let constraints = {};
     constraints.audio = {};
     constraints.audio.deviceId = audioSource ? {exact: audioSource} : undefined;
-    constraints.video = {}
+    constraints.video = {};
     constraints.video.deviceId = videoSource ? {exact: videoSource} : undefined;
     constraints.video.width = {ideal: Number(resolutionWidth)};
     constraints.video.height = {ideal: Number(resolutionHeight)};
@@ -435,7 +435,7 @@ function setCameraConfig() {
     }
     setOptions();//selectorの内容をリセットする。
     const constraints = setNewDeviceConstraints();//新しいデバイスにチェンジする時に必要な制約をセットする。
-
+    console.log(constraints);
     navigator.mediaDevices.getUserMedia(constraints)
       .then(gotStream)
       .then(gotDevices)
